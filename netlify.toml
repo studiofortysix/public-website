@@ -1,3 +1,29 @@
 [build]
   publish = "public"
   command = "yarn build"
+
+# Redirect /index.html to /
+[[redirects]]
+from = "/index.html"
+to = "/"
+status = 301
+force = true
+
+# (optional) canonical host, if you don’t want www
+[[redirects]]
+from = "http://studio46.co.nz/*"
+to = "https://studio46.co.nz/:splat"
+status = 301
+force = true
+
+[[redirects]]
+from = "http://www.studio46.co.nz/*"
+to = "https://studio46.co.nz/:splat"
+status = 301
+force = true
+
+[[redirects]]
+from = "https://www.studio46.co.nz/*"
+to = "https://studio46.co.nz/:splat"
+status = 301
+force = true

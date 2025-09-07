@@ -8,6 +8,10 @@
 <!-- theme meta -->
 <meta name="theme-name" content="hugoplate" />
 
+{{- if or (eq .Kind "taxonomy") (eq .Kind "term") -}}
+  <meta name="robots" content="noindex,follow">
+{{- end -}}
+
 <!-- favicon -->
 {{ partialCached "favicon" . }}
 
@@ -59,3 +63,9 @@
 
 <!-- Mermaid -->
 {{ partial "mermaid/assets/js" . }}
+
+{{- if .IsHome -}}
+<link rel="canonical" href="{{ .Site.BaseURL }}">
+{{- else -}}
+<link rel="canonical" href="{{ .Permalink }}">
+{{- end -}}

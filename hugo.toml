@@ -30,7 +30,6 @@ shortname = 'themefisher-template' # we use disqus to show comments in blog post
 [permalinks.page]
 "pages" = "/:slugorcontentbasename/"
 
-
 ########################## Pagination ############################
 [pagination]
 disableAliases = false
@@ -160,3 +159,7 @@ lazy = true
 [[params.plugins.js]]
 link = "plugins/youtube-lite.js"
 lazy = true
+
+
+baseURL = "https://studio46.co.nz/"   # must end with a trailing slash
+canonifyURLs = true
