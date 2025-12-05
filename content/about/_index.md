@@ -1,7 +1,8 @@
 ---
 title: "Hey, I’m Warrick Hunter"
-meta_title: "About"
-description: "Ex-Navy tech. Volunteer firefighter. Google Analytics consultant who gets things done without the fluff."
+seo_title: "About Studio 46 — NZ Analytics & Digital Performance Specialist"
+meta_description: "Studio 46 is run by Warrick Hunter, a NZ digital analytics specialist helping businesses improve decision-making with honest advice, clean data, and clear reporting."
+og_image: "/images/social/studio46-about.jpg"
 image: "/images/avatar.png"
 draft: false
 ---
