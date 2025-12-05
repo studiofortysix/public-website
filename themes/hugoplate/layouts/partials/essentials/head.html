@@ -1,5 +1,9 @@
 {{- /* Basic SEO meta tags for Studio 46 */ -}}
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
 {{- $siteTitle := .Site.Title -}}
 
 {{- /* Determine page title with SEO override support */ -}}
@@ -41,6 +45,7 @@
 
 {{- /* Canonical URL (canonical <link> tag is set in head.html) */ -}}
 {{- $canonical := cond .IsHome .Site.BaseURL .Permalink -}}
+<link rel="canonical" href="{{ $canonical }}">
 
 {{- /* Open Graph image logic: page-level override, then site default */ -}}
 {{- $image := "" -}}
@@ -64,6 +69,9 @@
 {{- if ne $image "" }}
   <meta property="og:image" content="{{ $image }}">
 {{- end -}}
+<meta property="og:site_name" content="{{ $siteTitle }}">
+
+<meta name="robots" content="index, follow">
 
 {{- /* Twitter card tags */ -}}
 <meta name="twitter:card" content="summary_large_image">
@@ -74,3 +82,29 @@
 {{- if ne $image "" }}
   <meta name="twitter:image" content="{{ $image }}">
 {{- end -}}
+
+<meta itemprop="name" content="{{ $pageTitle }}">
+{{- if ne $description "" }}
+<meta itemprop="description" content="{{ $description }}">
+{{- end }}
+{{- if ne $image "" }}
+<meta itemprop="image" content="{{ $image }}">
+{{- end }}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": {{ printf "%q" $siteTitle }},
+  "url": {{ printf "%q" $canonical }}
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": {{ printf "%q" $siteTitle }},
+  "url": {{ printf "%q" .Site.BaseURL }}
+}
+</script>
