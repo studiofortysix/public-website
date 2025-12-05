@@ -1,10 +1,8 @@
 ---
 title: "Services"
-# meta title
-meta_title: ""
-# meta description
-description: "Clean, precise, no-nonsense analytics and digital marketing services for marketers and agencies who need it done right."
-# save as draft
+seo_title: "Analytics, Dashboards, Tracking & Digital Reporting Services | Studio 46"
+meta_description: "Get accurate tracking, Google Analytics 4 setup, dashboard reporting, and clean digital measurement. Studio 46 helps NZ businesses understand where customers come from and what drives results."
+og_image: "/images/social/studio46-services.jpg"
 draft: false
 ---
 

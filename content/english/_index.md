@@ -1,4 +1,8 @@
 ---
+seo_title: "Google Analytics, Dashboards & Digital Insights for NZ Businesses"
+meta_description: "Studio 46 helps NZ businesses make smarter decisions with clean analytics, custom dashboards, and honest digital advice. No jargon, just clear insights you can act on."
+og_image: "/images/social/studio46-home.jpg"
+
 # Banner
 banner:
   title: "Stop Guessing. Start Measuring What Matters."

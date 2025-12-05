@@ -26,6 +26,10 @@ ID = 'G-MEASUREMENT_ID' # see https://gohugo.io/templates/internal/#configure-go
 [services.disqus]
 shortname = 'themefisher-template' # we use disqus to show comments in blog posts . To install disqus please follow this tutorial https://portfolio.peter-baumgartner.net/2017/09/10/how-to-install-disqus-on-hugo/
 
+[params]
+  description = "Studio 46 helps NZ businesses make sense of their marketing and customer data with Google Analytics, dashboards, and honest advice."
+  defaultOgImage = "images/social/studio46-social-card.jpg"
+  
 ########################## Permalinks ############################
 [permalinks.page]
 "pages" = "/:slugorcontentbasename/"
@@ -54,6 +58,7 @@ target = 'assets'
 disableWatch = true
 source = 'hugo_stats.json'
 target = 'assets/notwatching/hugo_stats.json'
+
 
 
 ############################# Outputs ############################
@@ -160,6 +165,8 @@ lazy = true
 link = "plugins/youtube-lite.js"
 lazy = true
 
+# Disable taxonomy and term pages entirely
+disableKinds = ["taxonomy", "term"]
 
 baseURL = "https://studio46.co.nz/"   # must end with a trailing slash
 canonifyURLs = true

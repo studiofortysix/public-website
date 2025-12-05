@@ -9,6 +9,13 @@ to = "/"
 status = 301
 force = true
 
+# Redirect any /something/index.html to /something/
+[[redirects]]
+from = "/:splat/index.html"
+to = "/:splat/"
+status = 301
+force = true
+
 # (optional) canonical host, if you don’t want www
 [[redirects]]
 from = "http://studio46.co.nz/*"

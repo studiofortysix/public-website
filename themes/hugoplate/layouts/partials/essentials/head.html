@@ -1,71 +1,76 @@
-<meta charset="utf-8" />
+{{- /* Basic SEO meta tags for Studio 46 */ -}}
 
-<!-- responsive meta -->
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1, maximum-scale=5" />
+{{- $siteTitle := .Site.Title -}}
 
-<!-- theme meta -->
-<meta name="theme-name" content="hugoplate" />
-
-{{- if or (eq .Kind "taxonomy") (eq .Kind "term") -}}
-  <meta name="robots" content="noindex,follow">
+{{- /* Determine page title with SEO override support */ -}}
+{{- $pageTitle := .Title -}}
+{{- with .Params.seo_title }}
+  {{- $pageTitle = . -}}
 {{- end -}}
 
-<!-- favicon -->
-{{ partialCached "favicon" . }}
+{{- if .IsHome }}
+  {{- $pageTitle = $siteTitle -}}
+{{- end -}}
 
+<title>{{ if .IsHome }}{{ $siteTitle }}{{ else }}{{ $pageTitle }} | {{ $siteTitle }}{{ end }}</title>
 
-<!-- manifest -->
-{{ partialCached "manifest" . }}
+{{- /* Build a meta description with sensible fallbacks */ -}}
+{{- $description := "" -}}
 
+{{- with .Params.meta_description }}
+  {{- $description = . | plainify | htmlUnescape | truncate 155 -}}
+{{- end -}}
 
-<!-- site verifications -->
-{{ partialCached "site-verifications.html" . }}
+{{- if and (eq $description "") (isset .Params "description") }}
+  {{- $description = .Params.description | plainify | htmlUnescape | truncate 155 -}}
+{{- end -}}
 
+{{- if and (eq $description "") .IsHome }}
+  {{- with .Site.Params.description }}
+    {{- $description = . | plainify | htmlUnescape | truncate 155 -}}
+  {{- end -}}
+{{- end -}}
 
-<!-- opengraph and twitter card -->
-{{ partial "basic-seo.html" . }}
+{{- if and (eq $description "") (.Summary) }}
+  {{- $description = .Summary | plainify | htmlUnescape | truncate 155 -}}
+{{- end -}}
 
+{{- if ne $description "" }}
+  <meta name="description" content="{{ $description }}">
+{{- end -}}
 
-<!-- custom script -->
-{{ partialCached "custom-script.html" . }}
+{{- /* Canonical URL (canonical <link> tag is set in head.html) */ -}}
+{{- $canonical := cond .IsHome .Site.BaseURL .Permalink -}}
 
+{{- /* Open Graph image logic: page-level override, then site default */ -}}
+{{- $image := "" -}}
+{{- with .Params.og_image }}
+  {{- $image = . | absURL -}}
+{{- end -}}
 
-<!-- google analytics -->
-{{ if and site.Config.Services.GoogleAnalytics.ID (ne site.Config.Services.GoogleAnalytics.ID "G-MEASUREMENT_ID") }}
-  {{ template "_internal/google_analytics.html" . }}
-{{ end }}
+{{- if and (eq $image "") (isset .Site.Params "defaultOgImage") }}
+  {{- with .Site.Params.defaultOgImage }}
+    {{- $image = . | absURL -}}
+  {{- end -}}
+{{- end -}}
 
+{{- /* Open Graph tags */ -}}
+<meta property="og:type" content="{{ if .IsHome }}website{{ else }}article{{ end }}">
+<meta property="og:title" content="{{ $pageTitle }}">
+{{- if ne $description "" }}
+  <meta property="og:description" content="{{ $description }}">
+{{- end -}}
+<meta property="og:url" content="{{ $canonical }}">
+{{- if ne $image "" }}
+  <meta property="og:image" content="{{ $image }}">
+{{- end -}}
 
-<!-- google tag manager -->
-{{ partialCached "gtm.html" . }}
-
-
-<!-- search index -->
-{{ partial "search-index.html" . }}
-
-
-<!-- matomo analytics -->
-{{/* {{ partialCached "matomo-analytics.html" . }} */}}
-
-<!--  Baidu analytics -->
-{{/* {{ partialCached "baidu-analytics.html" . }} */}}
-
-<!-- Plausible Analytics -->
-{{/* {{ partialCached "plausible-analytics.html" . }} */}}
-
-<!-- Counter Analytics -->
-{{/* {{ partialCached "counter-analytics.html" . }} */}}
-
-<!-- Crisp Chat -->
-{{/* {{ partialCached "crisp-chat.html" . }} */}}
-
-<!-- Mermaid -->
-{{ partial "mermaid/assets/js" . }}
-
-{{- if .IsHome -}}
-<link rel="canonical" href="{{ .Site.BaseURL }}">
-{{- else -}}
-<link rel="canonical" href="{{ .Permalink }}">
+{{- /* Twitter card tags */ -}}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ $pageTitle }}">
+{{- if ne $description "" }}
+  <meta name="twitter:description" content="{{ $description }}">
+{{- end -}}
+{{- if ne $image "" }}
+  <meta name="twitter:image" content="{{ $image }}">
 {{- end -}}
