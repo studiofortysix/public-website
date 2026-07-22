@@ -1,5 +1,5 @@
 ---
-enable: true
+enable: false
 title: "What Clients Are Saying"
 description: "I work with marketing managers, business owners, and agencies who just want their analytics done right — fast, properly, and without the drama. Here's what a few of them had to say:"
 
@@ -28,4 +28,5 @@ testimonials:
 # don't create a separate page
 build:
   render: "never"
+  list: "never"
 ---

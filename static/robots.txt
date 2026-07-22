@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://studio46.co.nz/sitemap.xml

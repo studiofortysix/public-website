@@ -1,59 +1,57 @@
 ---
-seo_title: "Google Analytics, Dashboards & Digital Insights for NZ Businesses"
-meta_description: "Studio 46 helps NZ businesses make smarter decisions with clean analytics, custom dashboards, and honest digital advice. No jargon, just clear insights you can act on."
-og_image: "/images/social/studio46-home.jpg"
+seo_title: "GA4 Analytics & Reporting for NZ Businesses | Studio 46"
+meta_description: "Studio 46 fixes unreliable GA4 and GTM tracking, builds useful dashboards, and helps NZ marketing teams make confident decisions from accurate data."
+og_image: "/images/og-image-v2.png"
 
 # Banner
 banner:
-  title: "Stop Guessing. Start Measuring What Matters."
-  content: "I’m Warrick Hunter – an ex-Navy tech, volunteer firefighter, and your go-to Google Analytics specialist. I help digital marketing managers and agencies clean up messy data, build dashboards that actually get used, and finally trust the numbers in front of them."
-  image: "/images/banner.png"
+  title: "Make Marketing Decisions With Data You Can Trust"
+  content: "Studio 46 fixes unreliable GA4 and Google Tag Manager tracking, builds dashboards people actually use, and gives NZ marketing teams clear answers without the agency overhead."
+  image: "/images/banner-analytics-v2.png"
+  image_alt: "Analytics specialist reviewing GA4 dashboards at a desk"
   button:
     enable: true
-    label: "Book a Quick Call"
-    link: "/contact"
+    label: "Talk Through Your Setup"
+    link: "/contact/"
 
 # Features
 features:
-  - title: "Why Work With Me Instead of an Agency?"
+  - title: "Find and Fix What Is Distorting Your Data"
     image: "/images/service-1.png"
-    content: "I’m calm in chaos, precise with details, and allergic to fluff. With 15+ years in digital marketing and web analytics – plus a background fault-finding everything from warships to websites – I’m the one who finds the problem, fixes it fast, and explains it in a way your CEO will actually understand."
+    content: "If conversions are missing, transactions are duplicated, or nobody trusts the numbers, I’ll trace the problem across GA4, Google Tag Manager, and your website, then give you a practical route to clean data."
     bulletpoints:
-      - "Ex-Navy electronics technician and volunteer firefighter"
-      - "15+ years in digital marketing and analytics"
-      - "Fast, precise, and no time-wasting jargon"
-      - "Built for marketers and agencies who need it done right"
-      - "Clarity, confidence, and clean dashboards"
-      - "Here to make your life easier — not harder"
+      - "GA4 and Google Tag Manager audits"
+      - "Conversion and ecommerce tracking fixes"
+      - "Duplicate, missing, and misleading event diagnosis"
+      - "Prioritised findings in plain English"
     button:
-      enable: false
-      label: ""
-      link: ""
+      enable: true
+      label: "See Analytics Services"
+      link: "/services/"
 
-  - title: "Who I Help (And How I Plug In)"
+  - title: "Turn Reporting Into Clear Next Steps"
     image: "/images/service-2.png"
-    content: "Whether you’re a digital marketing manager trying to make sense of tracking, or an agency needing a specialist to quietly make things work behind the scenes — Studio 46 plugs into your workflow without the drama. I fix what’s broken, optimise what matters, and deliver insights you can actually act on."
+    content: "A useful dashboard should show what changed, why it matters, and where to act. I build focused reporting in Looker Studio, Google Sheets, or Power BI around the decisions your team actually makes."
     bulletpoints:
-      - "Analytics audits & cleanups"
-      - "GA4 and Google Tag Manager setup"
-      - "Dashboards that highlight what really matters"
-      - "Practical strategy and tracking recommendations"
-      - "Project-based or ongoing support"
+      - "Decision-focused dashboards and reports"
+      - "Metrics aligned with commercial goals"
+      - "Automated reporting where it saves time"
+      - "Clear handover and documentation"
     button:
       enable: true
-      label: "View Services"
-      link: "/services"
+      label: "Explore Reporting Support"
+      link: "/services/"
 
-  - title: "Let’s Make Your Data Useful"
+  - title: "Get Senior Specialist Support Without the Layers"
     image: "/images/service-3.png"
-    content: "No more confusing reports. No more guessing. Just accurate, insightful data that helps you make better decisions — and look good in the next meeting. Let’s fix your tracking, sort your dashboards, and take the weight off your team."
+    content: "You work directly with Warrick Hunter, a NZ analytics specialist with 15+ years in digital marketing and a fault-finding background shaped by the Navy and volunteer firefighting. Projects stay calm, practical, and accountable."
     bulletpoints:
-      - "Done-for-you GA4 and tracking fixes"
-      - "Custom dashboards and reporting flows"
-      - "Data clarity that fuels smarter marketing"
-      - "Quick turnarounds and clear communication"
+      - "Direct access to the person doing the work"
+      - "One-off projects or ongoing support"
+      - "Quiet subcontracting for agencies"
+      - "Clear communication with no jargon or theatre"
     button:
       enable: true
-      label: "Get In Touch"
-      link: "/contact"
+      label: "Start a Conversation"
+      link: "/contact/"
 ---

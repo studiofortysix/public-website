@@ -1,0 +1,16 @@
+{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  {{- range where .Site.Pages "Kind" "in" (slice "home" "page" "section") }}
+    {{- $robots := .Params.robots | default "index, follow" }}
+    {{- if and .Permalink (not (in $robots "noindex")) }}
+      <url>
+        <loc>{{ .Permalink }}</loc>
+        {{- with .Lastmod }}
+          {{- if not .IsZero }}
+            <lastmod>{{ .Format "2006-01-02T15:04:05Z07:00" }}</lastmod>
+          {{- end }}
+        {{- end }}
+      </url>
+    {{- end }}
+  {{- end }}
+</urlset>

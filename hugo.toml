@@ -1,6 +1,8 @@
 ######################## default configuration ####################
 # The base URL of your site (required). This will be prepended to all relative URLs.
-baseURL = "/"
+baseURL = "https://studio46.co.nz/"
+canonifyURLs = true
+enableRobotsTXT = true
 # Title of your website (required).
 title = "Studio 46"
 # Your theme name
@@ -17,18 +19,11 @@ hasCJKLanguage = false #  If hasCJKLanguage true, auto-detect Chinese/Japanese/K
 defaultContentLanguage = 'en'
 # defaultContentLanguageInSubdir need to be true if you want to use the language code as a subdirectory and language specific 404 page
 defaultContentLanguageInSubdir = false
-
-########################### Services #############################
-[services]
-[services.googleAnalytics]
-ID = 'G-MEASUREMENT_ID' # see https://gohugo.io/templates/internal/#configure-google-analytics
-
-[services.disqus]
-shortname = 'themefisher-template' # we use disqus to show comments in blog posts . To install disqus please follow this tutorial https://portfolio.peter-baumgartner.net/2017/09/10/how-to-install-disqus-on-hugo/
+disableKinds = ["taxonomy", "term"]
 
 [params]
-  description = "Studio 46 helps NZ businesses make sense of their marketing and customer data with Google Analytics, dashboards, and honest advice."
-  defaultOgImage = "images/social/studio46-social-card.jpg"
+  description = "Studio 46 fixes unreliable GA4 and GTM tracking, builds useful dashboards, and helps NZ marketing teams make confident decisions from accurate data."
+  defaultOgImage = "images/og-image-v2.png"
   
 ########################## Permalinks ############################
 [permalinks.page]
@@ -63,7 +58,7 @@ target = 'assets/notwatching/hugo_stats.json'
 
 ############################# Outputs ############################
 [outputs]
-home = ["HTML", "RSS", "WebAppManifest", "SearchIndex"]
+home = ["HTML", "WebAppManifest"]
 
 ############################# Imaging ############################
 [imaging]
@@ -138,9 +133,6 @@ lazy = true
 
 # JS Plugins
 [[params.plugins.js]]
-link = "js/search.js"
-lazy = false
-[[params.plugins.js]]
 link = "plugins/swiper/swiper-bundle.js"
 lazy = false
 [[params.plugins.js]]
@@ -164,9 +156,3 @@ lazy = true
 [[params.plugins.js]]
 link = "plugins/youtube-lite.js"
 lazy = true
-
-# Disable taxonomy and term pages entirely
-disableKinds = ["taxonomy", "term"]
-
-baseURL = "https://studio46.co.nz/"   # must end with a trailing slash
-canonifyURLs = true

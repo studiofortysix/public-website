@@ -1,10 +1,7 @@
 ---
 title: "Privacy"
-# meta title
-meta_title: ""
-# meta description
-description: "This is meta description"
-# save as draft
+seo_title: "Privacy Policy"
+meta_description: "Read how Studio 46 collects, uses, stores, and protects personal information submitted through this website and its analytics tools."
 draft: false
 ---
 
@@ -63,14 +60,14 @@ If you're in New Zealand (or under the Privacy Act 2020), you have the right to:
 - Ask for your data to be deleted (where applicable)  
 - Withdraw consent for marketing at any time
 
-To make a request, email: **[warrick@studio46.co.nz]**
+To make a request, email: **[warrick@studio46.co.nz](mailto:warrick@studio46.co.nz)**
 
 ### 7. Contact
 
 If you have any questions or concerns about this privacy policy or how your information is handled, get in touch:
 
-**Studio 46**  
-Warrick Hunter  
-warrick@studio46.co.nz   
-0220594566  
-Auckland, New Zealand   
+**Studio 46**<br>
+Warrick Hunter<br>
+warrick@studio46.co.nz<br>
+022 059 4566<br>
+Auckland, New Zealand

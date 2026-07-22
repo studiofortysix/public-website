@@ -1,76 +1,77 @@
 ---
-title: "Services"
-seo_title: "Analytics, Dashboards, Tracking & Digital Reporting Services | Studio 46"
-meta_description: "Get accurate tracking, Google Analytics 4 setup, dashboard reporting, and clean digital measurement. Studio 46 helps NZ businesses understand where customers come from and what drives results."
-og_image: "/images/social/studio46-services.jpg"
+title: "Google Analytics & Reporting Services"
+seo_title: "GA4, GTM & Dashboard Services for NZ Businesses"
+meta_description: "Fix unreliable GA4 and GTM tracking, improve conversion measurement, and get dashboards your team can act on with Studio 46's NZ analytics support."
+og_image: "/images/og-image-v2.png"
 draft: false
 ---
 
 
-# What I Do
-
-With 15+ years in digital marketing (and a background in fault-finding tech — and fires), I fix what's broken, set up what matters, and build dashboards that people actually use.
+Get accurate tracking, reporting that answers real business questions, and direct access to the specialist doing the work. I help NZ marketing teams, business owners, and agencies solve measurement problems without a long agency process.
 
 ---
 
-# Core Services
+## How I Can Help
 
-## GA4 & Google Tag Manager Setup
-Get your tracking sorted once and for all.  
-I’ll audit your setup, fix what’s broken, and implement clean, future-proof event tracking with GA4 and GTM.
+### GA4 & Google Tag Manager Setup
 
-**Perfect for:**  
-- Businesses migrating to GA4  
-- Agencies needing a hands-off specialist  
-- Anyone sick of bad data
+Get your tracking sorted properly. I’ll audit the current setup, fix what is broken, and implement events and conversions around the actions that matter to your business.
+
+**A good fit when:**
+
+- Key conversions are missing or duplicated
+- GA4, GTM, and platform reports disagree
+- A new site, campaign, or ecommerce setup needs dependable measurement
 
 ---
 
-## Analytics Audits & Rescue Jobs
-Suspect something’s not working? You’re probably right.  
-I’ll dig into your setup, surface the issues, and get everything cleaned up — from duplicate transactions to ghost conversions.
+### Analytics Audits & Rescue Jobs
+
+When the numbers look wrong, I trace the issue across your website, tags, consent setup, and analytics configuration. You get a clear view of what is unreliable, what it affects, and what to fix first.
 
 **What you get:**  
-- Full GA/GTM audit  
-- Issues clearly documented  
-- Fixes implemented (or ready for your devs)
+
+- A focused GA4 and GTM audit
+- Prioritised findings in plain English
+- Fixes implemented or documented for your developers
 
 ---
 
-## Dashboards & Reporting
-Tired of dashboards nobody opens?  
-I build custom dashboards (Looker Studio, Google Sheets, Power BI) that are clear, actionable, and client-friendly.
+### Dashboards & Reporting
+
+I build focused dashboards in Looker Studio, Google Sheets, or Power BI that help people spot change, understand performance, and decide what to do next.
 
 **Expect:**  
-- Metrics that matter  
-- Reports that get read  
-- Automation where possible
+
+- Metrics aligned with business and marketing goals
+- Client- and leadership-friendly reporting
+- Automation where it removes repetitive work
 
 ---
 
-## Strategy & Tracking Advice
-Not sure what to track? Or how to structure your conversions?  
-I’ll help you design a measurement strategy that aligns with your business goals and marketing funnel.
+### Measurement Strategy & Advice
 
-**Helpful for:**  
-- Campaign planning  
-- CRO & performance teams  
-- KPI alignment with C-level reporting
+Not sure what to track, how to define a conversion, or which numbers belong in leadership reporting? I’ll turn business questions into a practical measurement plan.
+
+**Helpful for:**
+
+- Campaign and website planning
+- Performance and conversion teams
+- KPI alignment between marketing and leadership
 
 ---
 
-# Flexible Engagements
+## Flexible Ways to Work Together
 
 - One-off projects  
 - Ongoing retainers  
 - Quiet subcontracting for agencies  
-- Emergency fix-it jobs
+- Time-sensitive rescue work
 
-_No long onboarding. No bloated process. Just someone you can rely on to get the job done properly._
+You work directly with Warrick throughout. No long onboarding and no layers between the conversation and the work.
 
 ---
 
-# Let's Talk
+## Not Sure Where the Problem Starts?
 
-Not sure which service fits?  
-[**Get in touch →**](/contact/) and I’ll help you figure it out — even if you’re just after a second opinion.
+[**Tell me what is not working →**](/contact/) and I’ll help you identify the most useful next step, even if you only need a second opinion.

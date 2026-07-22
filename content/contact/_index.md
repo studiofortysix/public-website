@@ -1,6 +1,9 @@
 ---
-title: "Get in Touch"
-description: "Let’s talk data, dashboards, or that GA4 setup you’re sick of looking at."
+title: "Discuss Your Analytics Setup"
+seo_title: "Talk to a GA4 & Analytics Specialist"
+meta_description: "Talk to Studio 46 about unreliable GA4 or GTM tracking, dashboard reporting, measurement strategy, or specialist analytics support for your team."
+og_image: "/images/og-image-v2.png"
+outputs: ["HTML"]
 draft: false
 ---
 

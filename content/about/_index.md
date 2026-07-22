@@ -1,9 +1,10 @@
 ---
 title: "Hey, I’m Warrick Hunter"
-seo_title: "About Studio 46 — NZ Analytics & Digital Performance Specialist"
+seo_title: "About Warrick Hunter — NZ Analytics Specialist"
 meta_description: "Studio 46 is run by Warrick Hunter, a NZ digital analytics specialist helping businesses improve decision-making with honest advice, clean data, and clear reporting."
-og_image: "/images/social/studio46-about.jpg"
+og_image: "/images/og-image-v2.png"
 image: "/images/avatar.png"
+outputs: ["HTML"]
 draft: false
 ---
 
