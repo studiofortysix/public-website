@@ -1,0 +1,59 @@
+{{ define "main" }}
+  <section class="s46-shell s46-page-hero">
+    <p class="s46-eyebrow">Selected work</p>
+    <h1>{{ .Title }}</h1>
+    <p class="s46-lede">{{ site.Data.work_examples.intro }}</p>
+  </section>
+
+  <section class="s46-shell s46-cases" aria-label="Selected work examples">
+    {{ range $index, $case := site.Data.work_examples.cases }}
+      <article class="s46-case" id="{{ .id }}" aria-labelledby="case-{{ .id }}-title">
+        <div class="s46-case-heading">
+          <p class="s46-eyebrow"><span aria-hidden="true">{{ printf "%02d" (add $index 1) }} / </span>{{ .category }}</p>
+          <h2 id="case-{{ .id }}-title">{{ .title }}</h2>
+          <div class="s46-case-status">
+            <p><strong>{{ .completed }}</strong></p>
+            <p>{{ .limitation }}</p>
+          </div>
+        </div>
+
+        <div class="s46-case-body">
+          <dl class="s46-case-facts">
+            <div>
+              <dt>The question</dt>
+              <dd>{{ .question }}</dd>
+            </div>
+            <div>
+              <dt>My role</dt>
+              <dd>{{ .role }}</dd>
+            </div>
+          </dl>
+
+          <details class="s46-case-details">
+            <summary>{{ .delivery_heading }}</summary>
+            <div class="s46-case-detail-content">
+              <p>{{ .delivery }}</p>
+              <h3>{{ .context_heading }}</h3>
+              <p>{{ .context }}</p>
+            </div>
+          </details>
+
+          <div class="s46-case-links" aria-label="Related services">
+            {{ range .links }}
+              <a href="{{ .url | relLangURL }}">{{ .label }}</a>
+            {{ end }}
+          </div>
+        </div>
+      </article>
+    {{ end }}
+  </section>
+
+  <section class="s46-shell s46-cta" aria-labelledby="work-contact-title">
+    <div>
+      <p class="s46-eyebrow">Work together</p>
+      <h2 id="work-contact-title">{{ site.Data.work_examples.cta.title }}</h2>
+      <p>{{ site.Data.work_examples.cta.description }}</p>
+    </div>
+    <a class="btn btn-primary" href="{{ "/contact/" | relLangURL }}">{{ site.Data.work_examples.cta.label }}</a>
+  </section>
+{{ end }}

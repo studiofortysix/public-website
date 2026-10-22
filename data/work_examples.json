@@ -1,0 +1,79 @@
+{
+  "intro": "These anonymised examples describe the work delivered and the evidence behind it. Client details and unpublished results are kept private.",
+  "cases": [
+    {
+      "id": "audit",
+      "category": "Specialist service business",
+      "title": "A completion event was not a confirmed customer.",
+      "completed": "Completed: independent review, findings report and supporting evidence.",
+      "limitation": "Further repairs were recommendations.",
+      "question": "Could website reporting reliably explain enquiries, customer registrations and payments?",
+      "role": "I reviewed the analytics and tracking configuration, compared website journeys with the business definitions, and tested selected behaviour in a controlled copy of the website.",
+      "delivery_heading": "What I found and delivered",
+      "delivery": "Some events described website activity rather than a dependable count of confirmed customers. The written audit distinguished accepted enquiries, customer confirmation and different payment categories. It set out the evidence, limitations and repairs to prioritise.",
+      "context_heading": "Why the distinction mattered",
+      "context": "A browser event alone could not establish every business outcome. The recommendations identified where operational records were needed and where tracking could be improved. The audit did not establish a revenue increase or a completed implementation.",
+      "links": [
+        {
+          "label": "Explore independent analytics audits ↗",
+          "url": "/ga4-gtm-audit/"
+        },
+        {
+          "label": "Explore measurement strategy ↗",
+          "url": "/measurement-strategy/"
+        }
+      ]
+    },
+    {
+      "id": "regulators",
+      "category": "Professional regulators",
+      "title": "Separate websites. One reporting structure.",
+      "completed": "Completed: a dashboard with two reporting views and a definitions page.",
+      "limitation": "No quantified business-impact claim is made.",
+      "question": "How could the team understand website performance using a report that was useful for recurring reporting and governance questions?",
+      "role": "I developed the reporting dashboard and worked through the team’s questions about the metrics and their interpretation.",
+      "delivery_heading": "What I delivered",
+      "delivery": "The completed report brought the two website views into one location, with a separate definitions page. Feedback on the draft informed the explanation of the measures. A limitation in the available search-term history was explicitly recorded.",
+      "context_heading": "What this demonstrates",
+      "context": "The value was in the combination of a usable reporting view, clear definitions and documented source coverage. It shows completed reporting delivery for professional regulators without implying a wider government endorsement or claiming an unmeasured performance improvement.",
+      "links": [
+        {
+          "label": "Explore dashboards and reporting ↗",
+          "url": "/dashboards-reporting/"
+        },
+        {
+          "label": "Explore public sector and regulatory support ↗",
+          "url": "/public-sector-analytics/"
+        }
+      ]
+    },
+    {
+      "id": "agency",
+      "category": "Agency collaboration",
+      "title": "Portal tracking checked before release.",
+      "completed": "Completed: GTM configuration and GA4 validation in staging.",
+      "limitation": "The later production release is outside this example.",
+      "question": "An agency was updating a professional regulator’s practitioner portal and needed selected page and course activity recorded in GA4.",
+      "role": "I worked with the developer on the event requirements, configured the relevant GTM variables, triggers and tags, and checked their behaviour on the staging website.",
+      "delivery_heading": "What I delivered",
+      "delivery": "The selected events were confirmed as firing to GA4 in the test environment. The handover clearly identified that point of validation and the need for a further check when the agency released the update.",
+      "context_heading": "What this demonstrates",
+      "context": "Specialist tracking support can fit into an existing agency and development workflow. Clear communication about what has been tested is part of the deliverable.",
+      "links": [
+        {
+          "label": "Explore analytics support for agencies ↗",
+          "url": "/agency-analytics-support/"
+        },
+        {
+          "label": "Explore conversion tracking ↗",
+          "url": "/conversion-tracking/"
+        }
+      ]
+    }
+  ],
+  "cta": {
+    "title": "Start with the question you need answered.",
+    "description": "Tell me what you are trying to understand, what is not working and which systems are involved.",
+    "label": "Discuss your project"
+  }
+}

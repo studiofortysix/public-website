@@ -1,0 +1,6 @@
+{{ define "main" }}
+<div class="s46-site s46-shell">
+  <header class="s46-page-hero"><p class="s46-eyebrow">About Studio 46</p><h1>One experienced specialist.<br>A practical point of view.</h1><p class="s46-lede">I’m Warrick Hunter, an independent marketing measurement and analytics consultant based in Auckland.</p></header>
+  <div class="s46-about-layout"><aside><p class="s46-eyebrow">Warrick Hunter</p>{{ partial "image" (dict "Src" .Params.image "Context" .Page "Alt" "Warrick Hunter" "Size" "200x200" "Class" "s46-portrait") }}<p>Independent consultant<br>Auckland, New Zealand</p><a class="s46-text-link" href="{{ `contact/` | relURL }}">Start a conversation ↗</a></aside><div class="s46-prose">{{ .Content | replaceRE `^<p>[^<]*</p>\s*` "" | safeHTML }}</div></div>
+</div>
+{{ end }}

@@ -1,0 +1,34 @@
+{{ define "main" }}
+  <div class="s46-shell">
+    <header class="s46-page-hero">
+      <p class="s46-eyebrow">Measurement services · New Zealand</p>
+      <h1>{{ .Title }}</h1>
+      <p class="s46-lede">Check the data, define the measures, repair the tracking or make the reporting useful. Each engagement starts with a question and a clear scope.</p>
+    </header>
+
+    <div class="s46-service-grid">
+      {{ range $index, $service := site.Data.service_pages }}
+        <article class="s46-service-card">
+          <p class="s46-eyebrow">{{ printf "%02d" (add $index 1) }} / {{ .short }}</p>
+          <h2><a href="{{ printf "/%s/" .slug | relURL }}">{{ .name }}</a></h2>
+          <p>{{ .intro }}</p>
+          <p class="s46-card-audience"><strong>A useful fit:</strong> {{ .audience }}</p>
+          <a class="s46-text-link" href="{{ printf "/%s/" .slug | relURL }}">Explore {{ .name }} <span aria-hidden="true">↗</span></a>
+        </article>
+      {{ end }}
+    </div>
+
+    <section class="s46-section s46-proof" aria-labelledby="service-boundaries-heading">
+      <div class="s46-section-heading"><p class="s46-eyebrow">A clear scope</p><h2 id="service-boundaries-heading">How the services fit together.</h2></div>
+      <div>
+        <p><strong>An audit</strong> checks whether your current measurement is dependable. <strong>A measurement strategy</strong> defines what you should measure and where the evidence needs to come from.</p>
+        <p><strong>Conversion tracking</strong> implements and validates agreed website signals. <strong>Dashboards and reporting</strong> make the available evidence useful to the people making decisions.</p>
+        <p><strong>Agency support</strong> is a way to deliver those capabilities alongside your team. <strong>Public sector and regulatory support</strong> applies them to website reporting, service use and organisational requirements.</p>
+        <p>If you are unsure which one you need, describe the problem. We can establish a sensible starting point before agreeing any work.</p>
+        <p>For examples of the work, <a class="s46-text-link" href="{{ "/work/" | relURL }}">see selected analytics and measurement projects <span aria-hidden="true">↗</span></a>.</p>
+      </div>
+    </section>
+
+    <section class="s46-cta" aria-labelledby="services-cta-heading"><div><p class="s46-eyebrow">Start a conversation</p><h2 id="services-cta-heading">Start with the question you need answered.</h2><p>Tell me what you are trying to understand, what is not working and which systems are involved.</p></div><a class="s46-button" href="{{ "/contact/" | relURL }}">Discuss your project <span aria-hidden="true">↗</span></a></section>
+  </div>
+{{ end }}

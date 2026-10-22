@@ -1,0 +1,35 @@
+Studio 46 content editing
+
+The site uses Hugo with the existing Hugoplate theme and site-level layouts.
+
+Service pages
+- Edit page titles, SEO titles, descriptions and URLs in content/pages/<slug>.md.
+- Edit the public service copy in data/service_pages.json, using the matching slug.
+- The homepage and services overview reuse those records.
+- data/service_pages.json contains public copy only. Keep research and editorial
+  evidence outside the published data files.
+
+Selected work
+- Edit the page title and SEO metadata in content/pages/work.md.
+- Edit the three public examples in data/work_examples.json.
+- Keep the audit, regulators and agency IDs unchanged because links use them.
+- Completion and scope caveats are always shown; longer detail uses native
+  details/summary controls.
+
+Supporting pages
+- Homepage layout and supporting presentation copy: layouts/index.html.
+- About and Contact body copy: content/about/_index.md and content/contact/_index.md.
+- Their opening paragraph appears in the hero once; the layout skips it in the body.
+- Services overview explanation: layouts/pages/services.html.
+- Visual styles: assets/css/custom.css. Original theme files are unchanged.
+
+The original full Markdown migration is retained in commit d7bd009.
+There is no second unrendered service/work copy to maintain in the current pages.
+
+Review
+Run Hugo from this worktree directory. For a local preview that disables GTM,
+HubSpot tracking and form submission:
+  hugo server --environment review --bind 127.0.0.1 --port 1314
+
+Production keeps the existing HubSpot integration. Do not use the review HTML
+as a production form implementation. No deployment has been made.

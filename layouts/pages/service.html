@@ -1,0 +1,72 @@
+{{ define "main" }}
+  {{ $page := . }}
+  {{ $slug := .File.ContentBaseName }}
+  {{ $service := index (where site.Data.service_pages "slug" $slug) 0 }}
+  {{ with $service }}
+    <div class="s46-shell">
+      <nav class="s46-breadcrumb" aria-label="Breadcrumb"><a href="{{ "/services/" | relURL }}">Services</a><span aria-hidden="true"> / </span><span>{{ .name }}</span></nav>
+      <div class="s46-service-layout">
+        <header class="s46-page-hero">
+          <p class="s46-eyebrow">{{ .name }} · New Zealand</p>
+          <h1>{{ $page.Title }}</h1>
+          <p class="s46-lede">{{ .lede }}</p>
+          <p>{{ .intro }}</p>
+          <div class="s46-actions"><a class="s46-button" href="{{ "/contact/" | relURL }}">{{ .cta }} <span aria-hidden="true">↗</span></a></div>
+        </header>
+        <aside class="s46-fit" aria-labelledby="service-fit-heading">
+          <p class="s46-eyebrow">A useful starting point when</p>
+          <h2 id="service-fit-heading">Does this sound familiar?</h2>
+          <ul>{{ range .signals }}<li>{{ . }}</li>{{ end }}</ul>
+        </aside>
+      </div>
+
+      <section class="s46-section" aria-labelledby="deliverables-heading">
+        <div class="s46-section-heading">
+          <p class="s46-eyebrow">Scope &amp; deliverables</p>
+          <h2 id="deliverables-heading">What you receive.</h2>
+          <p>{{ .audience }}</p>
+        </div>
+        <ul class="s46-deliverables">
+          {{ range .deliverables }}<li><h3>{{ index . 0 }}</h3><p>{{ index . 1 }}</p></li>{{ end }}
+        </ul>
+        <p class="s46-scope-note">{{ .boundary }}</p>
+      </section>
+
+      <section class="s46-section" aria-labelledby="value-heading">
+        <div class="s46-section-heading"><p class="s46-eyebrow">Why it matters</p><h2 id="value-heading">{{ .value_heading }}</h2></div>
+        <p class="s46-lede">{{ .value }}</p>
+      </section>
+
+      <section class="s46-section" aria-labelledby="process-heading">
+        <div class="s46-section-heading"><p class="s46-eyebrow">Working together</p><h2 id="process-heading">How the work proceeds.</h2></div>
+        <ol class="s46-steps">
+          {{ range .process }}<li><h3>{{ index . 0 }}</h3><p>{{ index . 1 }}</p></li>{{ end }}
+        </ol>
+      </section>
+
+      <section class="s46-section s46-proof" aria-labelledby="proof-heading">
+        <div class="s46-section-heading"><p class="s46-eyebrow">Anonymised work example</p><h2 id="proof-heading">An example from practice.</h2></div>
+        <div><p>{{ .proof_text }}</p><a class="s46-text-link" href="{{ printf "/work/#%s" .proof | relURL }}">Read the example and its scope <span aria-hidden="true">↗</span></a></div>
+      </section>
+
+      <section class="s46-section" aria-labelledby="questions-heading">
+        <div class="s46-section-heading"><p class="s46-eyebrow">Useful questions</p><h2 id="questions-heading">Before we start.</h2></div>
+        <div class="s46-faq">
+          {{ range .faqs }}<details><summary>{{ index . 0 }}<span aria-hidden="true">+</span></summary><div><p>{{ index . 1 }}</p></div></details>{{ end }}
+        </div>
+      </section>
+
+      <section class="s46-section" aria-labelledby="related-heading">
+        <div class="s46-section-heading"><h2 id="related-heading">Related support.</h2><a class="s46-text-link" href="{{ "/services/" | relURL }}">All measurement services <span aria-hidden="true">→</span></a></div>
+        <div class="s46-related">
+          {{ range .related }}
+            {{ $related := index (where site.Data.service_pages "slug" .) 0 }}
+            <a class="s46-service-card" href="{{ printf "/%s/" . | relURL }}"><h3>{{ $related.name }} <span aria-hidden="true">↗</span></h3><p>{{ $related.short }}</p></a>
+          {{ end }}
+        </div>
+      </section>
+
+      <section class="s46-cta" aria-labelledby="service-cta-heading"><div><p class="s46-eyebrow">Start a conversation</p><h2 id="service-cta-heading">Tell me what needs to be clearer.</h2><p>Describe the decision, the reporting problem or the journey you need to measure.</p></div><a class="s46-button" href="{{ "/contact/" | relURL }}">{{ .cta }} <span aria-hidden="true">↗</span></a></section>
+    </div>
+  {{ end }}
+{{ end }}

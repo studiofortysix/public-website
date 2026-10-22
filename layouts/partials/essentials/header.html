@@ -1,0 +1,25 @@
+<header class="s46-header">
+  <div class="s46-shell s46-header-inner">
+    <a class="s46-brand navbar-brand" href="{{ site.Home.RelPermalink }}" aria-label="Studio 46 home">{{ partial "logo" }}</a>
+    <nav class="s46-desktop-nav" aria-label="Main navigation">
+      {{ $page := . }}
+      {{ range site.Menus.main }}
+        {{ if and (ne .URL "/") (ne .URL "/contact/") }}
+          <a href="{{ .URL | relLangURL }}" {{ if eq (.URL | absURL) $page.Permalink }}aria-current="page"{{ end }}>{{ .Name }}</a>
+        {{ end }}
+      {{ end }}
+    </nav>
+    <div class="s46-header-actions">
+      {{ partial "components/theme-switcher" (dict "Class" "s46-theme-toggle") }}
+      <a class="s46-button s46-header-cta" href="{{ `contact/` | relURL }}">Discuss a project <span aria-hidden="true">↗</span></a>
+      <details class="s46-mobile-menu">
+        <summary>Menu <span class="s46-menu-icon" aria-hidden="true"></span></summary>
+        <nav aria-label="Mobile navigation">
+          {{ range site.Menus.main }}
+            <a href="{{ .URL | relLangURL }}">{{ .Name }}</a>
+          {{ end }}
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>

@@ -1,91 +1,18 @@
 {{ define "main" }}
-  {{ partial "page-header" . }}
-
-
-  <section class="section-sm">
-    <div class="container">
-      <div class="row">
-        <div class="md:col-10 lg:col-6 mx-auto">
-          <div class="content mb-8">{{ .Content }}</div>
-          {{ if site.Params.review_mode }}
-            <p class="content">Local review: form submission is disabled. The existing HubSpot form is retained for production.</p>
-          {{ else }}
-            <script src="https://js-na2.hsforms.net/forms/embed/242183160.js" defer></script>
-            <div class="hs-form-frame" data-region="na2" data-form-id="bcadce91-e864-465a-b098-ed0207be334c" data-portal-id="242183160"></div>
-          {{ end }}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- google map -->
-  {{ with site.Params.google_map }}
-    {{ if .enable }}
-      <div
-        id="map"
-        style="height: 400px;"
-        data-latitude="{{ .map_latitude }}"
-        data-longitude="{{ .map_longitude }}"
-        data-marker="{{ .map_marker | relURL }}"
-        data-marker-name="{{ site.Title }}"></div>
-    {{ end }}
-  {{ end }}
-
-  {{ with site.Params.subscription }}
-    {{ if .enable }}
-      <!-- subscription form -->
-      <form
-        action="{{ .mailchimp_form_action | safeURL }}"
-        method="post"
-        id="mc-embedded-subscribe-form"
-        novalidate="novalidate">
-        <div class="input-group w-75 mx-auto mb-3">
-          <input
-            type="email"
-            name="EMAIL"
-            placeholder="Email"
-            class="form-control required email mce_inline_error"
-            id="mce-EMAIL"
-            aria-required="true"
-            autocomplete="off"
-            required />
-          <button
-            class="input-group-text"
-            name="subscribe"
-            id="mc-embedded-subscribe">
-            {{ .button_label }}
-          </button>
-        </div>
-        <input
-          type="hidden"
-          name="EMAILTYPE"
-          id="mce-EMAILTYPE-0"
-          value="html" />
-        <div style="position:absolute;left:-5000px" aria-hidden="true">
-          <input type="text" name="{{ .name }}" tabindex="-1" />
-        </div>
-      </form>
-      <div id="mce-responses" class="clear">
-        <div
-          class="response text-white"
-          id="mce-error-response"
-          style="display:none"></div>
-        <div
-          class="response text-white"
-          id="mce-success-response"
-          style="display:none"></div>
-      </div>
-      <script
-        type="text/javascript"
-        src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script>
-      <!-- /subscription form -->
-    {{ end }}
-  {{ end }}
-
-  {{ if site.Params.google_map.enable }}
-    {{ $gmap:= resources.Get "plugins/maps/google-map.js" }}
-    <script defer src="{{ $gmap.RelPermalink }}"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ site.Params.google_map.map_api_key }}&libraries=places"></script>
-  {{ end }}
-
+<div class="s46-site s46-shell">
+  <header class="s46-page-hero"><p class="s46-eyebrow">Start a conversation</p><h1>What needs<br>to be clearer?</h1><p class="s46-lede">Tell me about the decision, the reporting problem or the journey you need to measure.</p></header>
+  <div class="s46-contact-layout">
+    <div class="s46-prose">{{ .Content | replaceRE `^<p>[^<]*</p>\s*` "" | safeHTML }}</div>
+    <aside class="s46-contact-panel">
+      <p class="s46-eyebrow">Discuss your project</p><h2>Tell me a little about your project.</h2>
+      {{ if site.Params.review_mode }}
+        <div class="s46-review-notice"><span class="s46-dot"></span><div><strong>Preview only</strong><p>Local review: form submission is disabled. The existing HubSpot form is retained for production.</p></div></div>
+      {{ else }}
+        <script src="https://js-na2.hsforms.net/forms/embed/242183160.js" defer></script>
+        <div class="hs-form-frame" data-region="na2" data-form-id="bcadce91-e864-465a-b098-ed0207be334c" data-portal-id="242183160"></div>
+      {{ end }}
+      <p class="s46-small">Prefer email? <a href="mailto:warrick@studio46.co.nz">warrick@studio46.co.nz</a></p>
+    </aside>
+  </div>
+</div>
 {{ end }}
