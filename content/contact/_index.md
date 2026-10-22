@@ -1,55 +1,27 @@
 ---
-title: "Discuss Your Analytics Setup"
-seo_title: "Talk to a GA4 & Analytics Specialist"
-meta_description: "Talk to Studio 46 about unreliable GA4 or GTM tracking, dashboard reporting, measurement strategy, or specialist analytics support for your team."
+title: "What needs to be clearer?"
+seo_title: "Discuss Your Measurement Project"
+meta_description: "Talk to Warrick Hunter about analytics, conversion tracking, reporting or measurement strategy. Contact Studio 46 in Auckland, New Zealand."
 og_image: "/images/og-image-v2.png"
-outputs: ["HTML"]
+url: "/contact/"
 draft: false
+outputs: ["HTML"]
 ---
 
-## Let’s Make This Easy
+Tell me about the decision, the reporting problem or the journey you need to measure.
 
-I work with marketing managers and agencies across NZ (and beyond).  
-Use the form below to get in touch — and I’ll usually reply within 1 business day.
+## A useful first brief.
 
-<div style="margin-top:2rem">
-  <div id="hs-form-container">
-    <p>Loading contact form…</p>
-  </div>
-</div>
+You do not need to diagnose the technical problem before getting in touch. A short explanation of what looks wrong, what you need to understand and which systems are involved is a useful starting point.
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const target = document.getElementById('hs-form-container');
-    if (!target) return;
+I’ll review the information and work with you to establish the scope, access and next step. Any project fee and deliverables are agreed before work begins.
 
-    const loadForm = () => {
-      if (target.dataset.loaded) return;
-      target.dataset.loaded = 'true';
+## Contact Warrick directly
 
-      const s = document.createElement('script');
-      s.src = "https://js.hsforms.net/forms/v2.js";
-      s.onload = function () {
-        if (window.hbspt) {
-          window.hbspt.forms.create({
-            portalId: "242183160",
-            formId: "bcadce91-e864-465a-b098-ed0207be334c",
-            target: "#hs-form-container"
-          });
-        }
-      };
-      document.body.appendChild(s);
-    };
+[warrick@studio46.co.nz](mailto:warrick@studio46.co.nz)
+[022 059 4566](tel:+64220594566)
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          loadForm();
-          observer.disconnect();
-        }
-      });
-    });
+Auckland, New Zealand.
+Working with organisations and agency teams across NZ.
 
-    observer.observe(target);
-  });
-</script>
+[Explore services](/services/) or [see selected work](/work/) if you would like more context.

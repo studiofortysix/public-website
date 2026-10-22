@@ -1,0 +1,4 @@
+# Local content review only. The production configuration stays unchanged.
+[params]
+review_mode = true
+google_tag_manager = ""

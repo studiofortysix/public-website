@@ -1,30 +1,52 @@
 ---
-title: "Hey, I’m Warrick Hunter"
-seo_title: "About Warrick Hunter — NZ Analytics Specialist"
-meta_description: "Studio 46 is run by Warrick Hunter, a NZ digital analytics specialist helping businesses improve decision-making with honest advice, clean data, and clear reporting."
+title: "One experienced specialist. A practical point of view."
+seo_title: "About Warrick Hunter | Independent Analytics Consultant NZ"
+meta_description: "Meet Warrick Hunter, the independent consultant behind Studio 46. Practical marketing measurement, analytics and reporting support for NZ organisations."
 og_image: "/images/og-image-v2.png"
+url: "/about/"
+draft: false
 image: "/images/avatar.png"
 outputs: ["HTML"]
-draft: false
 ---
 
-I’m Warrick — the person agencies call when their Google Analytics setup is on fire (sometimes literally).  
+I’m Warrick Hunter, an independent marketing measurement and analytics consultant based in Auckland.
 
-With over 15 years of experience in digital marketing, I specialise in fixing messy tracking setups, building dashboards people actually read, and helping teams finally trust their data. My background? I spent years as a Navy electronics technician fault-finding complex systems — and now I do the same thing with websites.
+I help organisations and agency teams understand their performance, improve the evidence behind their reporting and decide what to do next.
 
-These days, I run Studio 46 from my home office in Auckland. I work with digital marketing managers, business owners, and agencies who just want clarity and action — not fluff or endless back-and-forth.
+My work moves between business questions and the systems that record the answers: GA4, Google Tag Manager, advertising platforms, dashboards, CRM records and the website itself. The useful part is making those pieces mean something together.
 
-When I’m not deep in a Tag Manager container, I’m a volunteer firefighter. That’s taught me a lot about staying calm under pressure, being useful in a crisis, and not wasting anyone’s time.
+## A background in finding the fault.
 
----
+Before working in digital marketing, I was a Navy electronics technician. That background in fault-finding still shapes how I work: trace the problem, test the explanation and leave a clear record of what was found.
 
-## A few things I believe:
+I have more than 15 years of experience in digital marketing. Alongside Studio 46, I volunteer as a firefighter. Both roles reinforce the value of calm communication, preparation and being useful to the people around you.
 
-- If your data isn’t helping you make decisions, it’s just noise.  
-- Fluff looks good in pitch decks, not in dashboards.  
-- Clients don't need more tools — they need someone who knows how to use them properly.  
-- Your GA4 setup shouldn’t feel like another emergency.
+## How I work with clients.
 
----
+You work directly with me. I can take on a defined review, an implementation or reporting project, or an ongoing arrangement with clear priorities and capacity.
 
-Want to work together or ask a question? [Get in touch](/contact/) — I’d love to hear what you’re working on.
+I work with organisations directly and alongside agencies. Relevant experience includes independent analytics reviews, website and portal tracking, reporting for professional regulators, and measurement work for lead-generation businesses.
+
+The result should be something your team can use: a more dependable definition, an evidenced finding, a tested implementation or a report that supports a useful discussion.
+
+[See anonymised examples of the work ↗](/work/)
+
+## What you can expect.
+
+### A clear question
+
+We establish what you need to understand before adding more tracking or another report.
+
+### Evidence with context
+
+Findings explain what was checked, what the evidence shows and which questions remain open.
+
+### A usable handover
+
+Your team receives the explanation and documentation appropriate to the work.
+
+## Start with the question you need answered.
+
+Tell me what you are trying to understand, what is not working and which systems are involved.
+
+[Discuss your project](/contact/)

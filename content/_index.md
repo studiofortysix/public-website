@@ -1,57 +1,125 @@
 ---
-seo_title: "GA4 Analytics & Reporting for NZ Businesses | Studio 46"
-meta_description: "Studio 46 fixes unreliable GA4 and GTM tracking, builds useful dashboards, and helps NZ marketing teams make confident decisions from accurate data."
+seo_title: "Independent Marketing Measurement NZ | Studio 46"
+meta_description: "Independent analytics, measurement strategy, GA4, GTM and reporting support for NZ organisations and agencies. Work directly with Warrick Hunter."
 og_image: "/images/og-image-v2.png"
-
-# Banner
 banner:
-  title: "Make Marketing Decisions With Data You Can Trust"
-  content: "Studio 46 fixes unreliable GA4 and Google Tag Manager tracking, builds dashboards people actually use, and gives NZ marketing teams clear answers without the agency overhead."
+  title: "Make better decisions with data you can trust."
+  content: "Connect marketing activity to enquiries, customers and the decisions that matter. Work directly with Warrick Hunter on analytics, tracking and reporting that makes sense."
   image: "/images/banner-analytics-v2.png"
   image_alt: "Analytics specialist reviewing GA4 dashboards at a desk"
   button:
     enable: true
-    label: "Talk Through Your Setup"
+    label: "Discuss your project"
     link: "/contact/"
-
-# Features
 features:
-  - title: "Find and Fix What Is Distorting Your Data"
+  - title: "Can we trust these numbers?"
     image: "/images/service-1.png"
-    content: "If conversions are missing, transactions are duplicated, or nobody trusts the numbers, I’ll trace the problem across GA4, Google Tag Manager, and your website, then give you a practical route to clean data."
+    content: "Find out what is unreliable, why it matters and what to fix first."
     bulletpoints:
-      - "GA4 and Google Tag Manager audits"
-      - "Conversion and ecommerce tracking fixes"
-      - "Duplicate, missing, and misleading event diagnosis"
-      - "Prioritised findings in plain English"
+      - "A GA4 and Google Tag Manager audit checks the current measurement."
+      - "Evidence distinguishes website activity, accepted enquiries and confirmed customers."
     button:
       enable: true
-      label: "See Analytics Services"
-      link: "/services/"
-
-  - title: "Turn Reporting Into Clear Next Steps"
+      label: "Explore analytics audits"
+      link: "/ga4-gtm-audit/"
+  - title: "Which activity becomes useful business?"
     image: "/images/service-2.png"
-    content: "A useful dashboard should show what changed, why it matters, and where to act. I build focused reporting in Looker Studio, Google Sheets, or Power BI around the decisions your team actually makes."
+    content: "Connect website and campaign measures to leads, customers and business records."
     bulletpoints:
-      - "Decision-focused dashboards and reports"
-      - "Metrics aligned with commercial goals"
-      - "Automated reporting where it saves time"
-      - "Clear handover and documentation"
+      - "Agree what success means before asking tools to report it."
+      - "Make definitions, source gaps and handover requirements clear."
     button:
       enable: true
-      label: "Explore Reporting Support"
-      link: "/services/"
-
-  - title: "Get Senior Specialist Support Without the Layers"
+      label: "Explore measurement strategy"
+      link: "/measurement-strategy/"
+  - title: "What should management see?"
     image: "/images/service-3.png"
-    content: "You work directly with Warrick Hunter, a NZ analytics specialist with 15+ years in digital marketing and a fault-finding background shaped by the Navy and volunteer firefighting. Projects stay calm, practical, and accountable."
+    content: "Build a reporting view around decisions, with the definitions and gaps made clear."
     bulletpoints:
-      - "Direct access to the person doing the work"
-      - "One-off projects or ongoing support"
-      - "Quiet subcontracting for agencies"
-      - "Clear communication with no jargon or theatre"
+      - "Start with the questions your team needs to answer."
+      - "Leave a usable report with documented measures and limitations."
     button:
       enable: true
-      label: "Start a Conversation"
-      link: "/contact/"
+      label: "Explore dashboards and reporting"
+      link: "/dashboards-reporting/"
 ---
+
+For organisations and agency teams who need a clearer answer. **Direct access to the specialist. More than 15 years in digital marketing. Auckland based, working across NZ.**
+
+## Follow the evidence
+
+1. **Website activity:** What someone viewed, clicked or attempted.
+2. **An accepted enquiry:** A request your business actually received.
+3. **A confirmed customer:** An outcome supported by your business records.
+
+Different measures. Different decisions. A useful measurement system makes the relationship clear.
+
+## Specialist support, clearly scoped.
+
+### [GA4 & GTM audits](/ga4-gtm-audit/)
+
+Know which numbers you can trust before you use them to make a decision.
+
+### [Conversion tracking](/conversion-tracking/)
+
+Measure accepted enquiries and completed actions with tracking your team can understand.
+
+### [Dashboards & reporting](/dashboards-reporting/)
+
+Spend less time collecting figures and more time understanding what they mean.
+
+### [Measurement strategy](/measurement-strategy/)
+
+Agree what success means before asking your tools to report it.
+
+### [Analytics support for agencies](/agency-analytics-support/)
+
+Add experienced measurement support while keeping a clear client relationship.
+
+### [Public sector & regulatory analytics](/public-sector-analytics/)
+
+Understand how your website supports the people who use it, with measures your team can explain.
+
+[Explore all services and how they fit together](/services/).
+
+## Real problems. Useful evidence.
+
+Anonymised examples of completed work, with a clear distinction between what was delivered and what was recommended.
+
+### When a completion event was not a confirmed customer.
+
+A review of website journeys, tracking and business definitions established which measures needed operational evidence.
+
+[Read the audit example](/work/#audit)
+
+### A shared report, with clearer definitions.
+
+Reporting for two professional regulators brought separate website views and an explanation of the key measures into one dashboard.
+
+[Read the reporting example](/work/#regulators)
+
+## A practical way to get a clearer answer.
+
+### Agree the question
+
+We establish what you need to decide and which systems and journeys matter.
+
+### Check the evidence
+
+I inspect, define or build the measurement within an agreed scope.
+
+### Leave a usable result
+
+You receive the findings, implementation or reporting, with a clear explanation and handover.
+
+### Work directly with Warrick.
+
+I bring a background in technical fault-finding and more than 15 years in digital marketing. You speak to the person doing the work, from the first brief through to the handover.
+
+[About Warrick](/about/)
+
+## Start with the question you need answered.
+
+Tell me what you are trying to understand, what is not working and which systems are involved.
+
+[Discuss your project](/contact/)
