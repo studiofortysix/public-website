@@ -5,6 +5,8 @@ CURRENT STATE
 The native form and server handler are on the review branch. Sending defaults off
 at both the build and server layers. Review submission stays entirely local.
 No Netlify deployment, DNS change, real enquiry or notification test was made.
+The real Turnstile widget and production configuration are now saved. Both
+activation flags remain false. The dedicated HubSpot receiver remains Draft.
 
 HubSpot account: 242183160 (Studio46)
 Original live form: bcadce91-e864-465a-b098-ed0207be334c - unchanged.
@@ -20,7 +22,8 @@ The existing form and its CAPTCHA remain unchanged.
 
 FLOW PREPARED IN CODE
 Native Hugo fields -> same-origin /api/enquiry Netlify Function -> Turnstile
-Siteverify -> dedicated HubSpot Forms API receiver. The form itself has no iframe.
+Siteverify -> atomic token redemption -> dedicated HubSpot Forms API receiver.
+The form itself has no iframe.
 The Turnstile widget may use its own verification frame once activated.
 
 Fields: firstname, lastname, email (required), enquiry (optional, max4000).
@@ -32,12 +35,15 @@ The privacy page includes HubSpot enquiry handling and Turnstile verification.
 
 SPAM / RELIABILITY CONTROLS
 - Server-side Turnstile success, exact contact action and exact origin/hostname.
+- Valid, recent challenge timestamp; independent atomic token redemption before
+  HubSpot forwarding. Storage failure blocks sending.
 - Same-origin HTTPS requests only; no local hostnames in production configuration.
 - Honeypot, bounded fields/JSON body, minimum elapsed time, no unexpected fields.
 - Netlify rate limit: 5 requests per60 seconds per IP/domain.
 - Official test secrets rejected in production. Missing configuration fails closed.
 - Branch/unpublished Netlify deploy contexts cannot forward to HubSpot.
 - Original live HubSpot form ID is always refused.
+- Only the confirmed dedicated receiver and reviewed consent mapping are accepted.
 - No automatic retry. Uncertain delivery locks repeat submission and offers email.
 - Success is shown only after an explicit server acceptance response.
 
@@ -47,31 +53,69 @@ those requests do not pass through this handler. A form ID is not a credential.
 Do not claim that Turnstile protects every possible route into HubSpot. Check
 HubSpot's own spam handling and monitor the dedicated form after activation.
 
-REMAINING ACTIVATION STEPS - SENDING REMAINS OFF
-1. Resolve the dedicated receiver's consent mapping. The cloned definition has
-   legitimate-interest subscription types708833434 and708833433, but the Forms API
-   submission legitimateInterest object supports one subscriptionTypeId. Choose
-   the correct enquiry-related subscription explicitly; do not silently subscribe
-   the enquirer to marketing. Match the configured text to the displayed notice
-   in data/enquiry_form.json plus the Privacy Policy link text. Accepted API legal
-   basis is LEAD or CUSTOMER; the internal form enum is not the API value.
-2. Check notification recipients and any lists/workflows against this new form ID.
-   Do not assume cloning preserved every downstream dependency.
-3. Create a dedicated production Turnstile widget for studio46.co.nz, action
-   contact. No widget or secret was created during review. The local auth probe
-   found no Cloudflare API token. Store its secret in Netlify Functions scope;
-   never put it in Hugo params, public files, chat, screenshots or Git.
-4. Configure the environment shown in .env.example through Netlify's secret and
-   environment settings. Build and function scopes are separate. Use production
-   context only. Both enable flags stay false until activation is approved.
-5. Publish the dedicated HubSpot receiver and deploy the website only after
-   separate approval. Keep the original form available until receipt is verified.
-6. Verify a controlled real enquiry, HubSpot receipt, field/consent mapping and
+CONFIGURATION COMPLETED - SENDING REMAINS OFF
+HubSpot consent: One to One, subscriptionTypeId708833434; legalBasis LEAD.
+Verified directly in the Studio46 draft editor. Marketing Information708833433
+was removed only from the new draft. Automatic marketing-contact classification
+was turned off in this draft. Existing contacts' preferences are not cleared.
+The API notice exactly matches data/enquiry_form.json plus " Privacy Policy.".
+The handler rejects different IDs, basis, text or extra communication permissions.
+Notification recipient is configured as warrick@studio46.co.nz. Actual receipt
+and the recipient's global notification preferences remain a live validation item.
+
+Cloudflare account: f6a0e6115bb061f2604740f8d29d68b9
+Widget: Studio 46 website enquiry
+Public sitekey: 0x4AAAAAAFhtaDDW7sf_9P3G
+Widget mode: Managed. Pre-clearance: off.
+Widget hostnames: studio46.co.nz, localhost, 127.0.0.1.
+Production handler accepts only studio46.co.nz, action contact, HTTPS origin
+https://studio46.co.nz. Local tokens cannot be forwarded by the production handler.
+
+Verified Netlify project: studio46, Studio 46 team; studio46.co.nz; connected to
+github.com/studiofortysix/public-website. Environment settings:
+https://app.netlify.com/projects/studio46/configuration/env
+All eight non-secret settings from .env.example are saved in Production only.
+HUGO_ENQUIRY_ENABLED=false and ENQUIRY_ENABLED=false were read back after saving.
+TURNSTILE_SECRET is marked as a protected secret, Production only; preview, branch,
+agent and local Netlify context values are empty. The current plan locks individual
+scopes: secret access covers Builds, Functions and Runtime, excluding post processing.
+No upgrade or policy change was made. Only the server handler uses the secret.
+An owner-only, Git-ignored local .env also holds the configuration for key validation.
+Never copy it into outputs, Git, public files or Hugo params. Public sitekeys are
+safe to expose; the server secret is not.
+
+TOKEN REPLAY CHECK
+The real widget/secret pair successfully validated a fresh local token with the
+expected contact action and exact local hostname. The local check contacted
+Cloudflare only; it had no HubSpot receiver. Unexpectedly, a second redemption
+also returned success, including when each request used a distinct idempotency
+key and no-store headers. Cloudflare's documentation specifies single-use tokens;
+the observed replay response did not meet that expectation.
+The function therefore has its own atomic duplicate check using Netlify Blobs:
+store studio46-enquiry-redemptions-v1, region us-east-2, onlyIfNew=true. Only a
+SHA-256 token fingerprint and fixed marker are stored, with no email, IP address,
+raw token, secret or enquiry text. Markers persist across deployments. No store
+was created or written during this review; provisioning is automatic on use.
+Concurrent, repeated and failed-storage cases are covered by offline tests.
+Actual deployed-store operation remains part of activation verification.
+The official @netlify/blobs SDK is pinned to11.1.6; Node22 is specified for the
+build and package runtime. Its conditional request and duplicate-result handling
+were checked with the actual SDK and a mocked HTTP transport. No real store write.
+
+REMAINING ACTIVATION STEPS - REQUIRE SEPARATE PUBLICATION APPROVAL
+1. Review any desired lists/workflows against the dedicated receiver ID. No
+   downstream workflow was added, changed or assumed to be connected.
+2. Publish the dedicated HubSpot receiver and activate the two enable flags in
+   Production, then deploy the reviewed website branch through the normal release
+   process. Keep the original form available until receipt is verified.
+3. Verify a controlled real enquiry, HubSpot receipt, field/consent mapping and
    notifications. Verify fresh-token success and replay rejection through the
    deployed handler; check rate-limit acceptance in Netlify deploy logs. Only
    then call the integration operational. Do not rely on offline tests as proof.
 
 LOCAL VERIFICATION
+154 automated checks passed with all enquiry submissions mocked.
+Both Hugo builds passed: six service pages,12 core routes,566 local references.
   npm run test:enquiry
   hugo --environment review
 Production builds also default to disabled sending. The portable review validates
@@ -84,3 +128,4 @@ https://developers.cloudflare.com/turnstile/get-started/server-side-validation/
 https://developers.cloudflare.com/turnstile/troubleshooting/testing/
 https://docs.netlify.com/build/functions/api/
 https://docs.netlify.com/build/functions/environment-variables/
+https://docs.netlify.com/build/data-and-storage/netlify-blobs/

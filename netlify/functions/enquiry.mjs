@@ -1,6 +1,9 @@
 // Netlify Request/Response function. Configuration and all credentials stay server-side.
 // Runtime context: https://docs.netlify.com/build/functions/api/
 // Rate-limit rules must be confirmed in the deploy log; enforcement can lag 10s.
+import enquiryForm from "../../data/enquiry_form.json" with { type: "json" };
+import { createHash } from "node:crypto";
+
 export const config = {
   path: "/api/enquiry",
   rateLimit: {
@@ -11,6 +14,15 @@ export const config = {
 };
 
 const ORIGINAL_FORM_ID = "bcadce91-e864-465a-b098-ed0207be334c";
+const DEDICATED_FORM_ID = "536a1f62-34c4-4738-a34f-41f8fbca6806";
+// Reviewed Studio46 receiver mapping: One to One, excluding Marketing Information.
+// The same tracked notice is rendered by Hugo; retain the visible link label.
+const REVIEWED_INTEREST = Object.freeze({
+  value: true,
+  subscriptionTypeId: enquiryForm.hubspot_consent.subscriptionTypeId,
+  legalBasis: enquiryForm.hubspot_consent.legalBasis,
+  text: `${enquiryForm.privacy_notice} Privacy Policy.`,
+});
 const SITEVERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 // https://developers.cloudflare.com/turnstile/troubleshooting/testing/
 const TEST_SECRETS = new Set([
@@ -20,6 +32,10 @@ const TEST_SECRETS = new Set([
 ]);
 const MAX_BODY_BYTES = 16_384;
 const MAX_FORM_AGE_MS = 24 * 60 * 60 * 1000;
+const MAX_CHALLENGE_AGE_MS = 300_000;
+const CHALLENGE_CLOCK_SKEW_MS = 30_000;
+const REDEMPTION_TIMEOUT_MS = 3_000;
+const REDEMPTION_STORE = "studio46-enquiry-redemptions-v1";
 const ALLOWED_FIELDS = new Set([
   "firstname", "lastname", "email", "enquiry", "turnstileToken", "website", "startedAt",
 ]);
@@ -45,11 +61,57 @@ function record(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
+function recentChallenge(value, currentTime) {
+  // Siteverify returns an ISO UTC timestamp. Reject missing, malformed and
+  // normalized-invalid dates rather than relying on Date.parse alone.
+  if (typeof value !== "string" ||
+      !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?Z$/.test(value)) return false;
+  const challengedAt = Date.parse(value);
+  if (!Number.isFinite(challengedAt)) return false;
+  const normalized = value.replace(/(?:\.(\d{1,9}))?Z$/, (_match, fraction = "") => `.${fraction.padEnd(3, "0").slice(0, 3)}Z`);
+  if (new Date(challengedAt).toISOString() !== normalized) return false;
+  const age = currentTime - challengedAt;
+  return age >= -CHALLENGE_CLOCK_SKEW_MS && age <= MAX_CHALLENGE_AGE_MS;
+}
+
+async function openRedemptionStore() {
+  // Load only after production gating and successful verification. Netlify
+  // supplies the current site's Blobs credentials; no token is stored in code.
+  const { getStore } = await import("@netlify/blobs");
+  return getStore(REDEMPTION_STORE, { region: "us-east-2" });
+}
+
+async function redeemToken(token, storeFactory, timeoutMs) {
+  const key = createHash("sha256").update(token, "utf8").digest("hex");
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error("redemption storage timeout")), timeoutMs);
+  });
+  try {
+    const result = await Promise.race([
+      (async () => {
+        const store = await storeFactory();
+        // One atomic write, without a preliminary read. Persist only the token
+        // digest and a constant marker, never the raw token or enquiry details.
+        return store.set(key, "redeemed", { onlyIfNew: true });
+      })(),
+      timeout,
+    ]);
+    if (!record(result) || typeof result.modified !== "boolean") {
+      throw new Error("invalid redemption storage result");
+    }
+    return result.modified === true;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 function settings(env) {
   const portalId = env.HUBSPOT_PORTAL_ID;
   const formId = env.HUBSPOT_FORM_ID?.toLowerCase();
-  // A dedicated, reviewed API form is mandatory. Never forward to the current live form.
-  if (portalId !== "242183160" || !/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(formId ?? "") ||
+  // The consent mapping belongs only to this confirmed Studio46 receiver.
+  // Never forward to another form, including the current live form.
+  if (portalId !== "242183160" || formId !== DEDICATED_FORM_ID ||
       formId === ORIGINAL_FORM_ID || !env.TURNSTILE_SECRET?.trim() ||
       TEST_SECRETS.has(env.TURNSTILE_SECRET.trim())) return null;
 
@@ -68,17 +130,15 @@ function settings(env) {
     }
 
     // Form-definition consent settings are not the Forms submission API payload.
-    // Configure only a reviewed payload for the dedicated form. No guessed defaults,
-    // communications[] opt-ins, or subscription IDs are added by this handler.
+    // Require the environment payload to match the tracked, reviewed mapping.
+    // No communications[] opt-ins or marketing subscription IDs are accepted.
     const legalConsentOptions = JSON.parse(env.HUBSPOT_LEGAL_CONSENT_JSON ?? "");
     if (!record(legalConsentOptions) || Object.keys(legalConsentOptions).length !== 1 ||
         !record(legalConsentOptions.legitimateInterest)) return null;
     const interest = legalConsentOptions.legitimateInterest;
     const keys = ["value", "subscriptionTypeId", "legalBasis", "text"];
-    if (Object.keys(interest).some(key => !keys.includes(key)) || interest.value !== true ||
-        !Number.isSafeInteger(interest.subscriptionTypeId) || interest.subscriptionTypeId < 1 ||
-        !["LEAD", "CUSTOMER"].includes(interest.legalBasis) ||
-        typeof interest.text !== "string" || !interest.text.trim() || interest.text.length > 4000) return null;
+    if (Object.keys(interest).length !== keys.length ||
+        keys.some(key => interest[key] !== REVIEWED_INTEREST[key])) return null;
     return { portalId, formId, origins, hostnames, legalConsentOptions, secret: env.TURNSTILE_SECRET };
   } catch {
     return null;
@@ -156,7 +216,7 @@ async function fetchJSON(fetchImpl, url, options, timeoutMs) {
 
 // Dependency injection is used only by offline tests. The deployed default uses
 // Netlify's trusted context, process.env, the platform fetch, and a 10s deadline.
-export function createEnquiryHandler({ env = process.env, fetchImpl = globalThis.fetch, now = Date.now, timeoutMs = 10_000 } = {}) {
+export function createEnquiryHandler({ env = process.env, fetchImpl = globalThis.fetch, now = Date.now, timeoutMs = 10_000, redemptionStoreFactory = openRedemptionStore } = {}) {
   return async (request, context = {}) => {
     if (request.method !== "POST") return reply(405, "method_not_allowed", "Use POST for enquiries.", { Allow: "POST" });
     // CONTEXT is a build variable, not a guaranteed function runtime variable.
@@ -196,8 +256,20 @@ export function createEnquiryHandler({ env = process.env, fetchImpl = globalThis
     }
     const verified = verification.body;
     if (!verification.response.ok || !record(verified) || verified.success !== true ||
-        verified.action !== "contact" || !options.hostnames.has(verified.hostname) || verified.hostname !== new URL(origin).hostname) {
+        verified.action !== "contact" || !options.hostnames.has(verified.hostname) || verified.hostname !== new URL(origin).hostname ||
+        !recentChallenge(verified.challenge_ts, now())) {
       return reply(403, "verification_failed", "Please complete the security check again.");
+    }
+
+    // Do not rely solely on the vendor's single-use response. This sitewide,
+    // conditional claim permits at most one HubSpot attempt across instances.
+    // Keep claims after all outcomes, including timeout or uncertain delivery.
+    try {
+      if (!await redeemToken(fields.turnstileToken, redemptionStoreFactory, Math.min(timeoutMs, REDEMPTION_TIMEOUT_MS))) {
+        return reply(403, "verification_failed", "Please complete the security check again.");
+      }
+    } catch {
+      return reply(503, "unavailable", "The enquiry form is unavailable. Please email warrick@studio46.co.nz.");
     }
 
     const payload = {

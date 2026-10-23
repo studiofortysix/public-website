@@ -4,6 +4,9 @@
   "version": "2.1.4",
   "license": "MIT",
   "author": "zeon.studio",
+  "engines": {
+    "node": ">=22.12.0 <23"
+  },
   "scripts": {
     "test:enquiry": "node --test test/enquiry.test.mjs test/enquiry-form.test.cjs",
     "dev": "hugo server",
@@ -18,6 +21,9 @@
     "theme-setup": "node ./scripts/themeSetup.js",
     "update-theme": "node ./scripts/themeUpdate.js",
     "format": "prettier -w ."
+  },
+  "dependencies": {
+    "@netlify/blobs": "11.1.6"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.6",

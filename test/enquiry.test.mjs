@@ -1,15 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import enquiryForm from "../data/enquiry_form.json" with { type: "json" };
 import { createEnquiryHandler, config } from "../netlify/functions/enquiry.mjs";
 
 const NOW = 1_800_000_000_000;
 const ORIGIN = "https://studio46.co.nz";
-const FORM_ID = "11111111-2222-4333-8444-555555555555";
+const FORM_ID = "536a1f62-34c4-4738-a34f-41f8fbca6806";
 const CONTEXT = { deploy: { context: "production", published: true }, ip: "192.0.2.10" };
-// Synthetic configuration only. This fixture does not establish approved consent
-// wording, subscription mapping, or acceptance by a real HubSpot form.
-const LEGAL = { legitimateInterest: { value: true, subscriptionTypeId: 999,
-  legalBasis: "LEAD", text: "Synthetic test notice for a requested service enquiry." } };
+// Contact data and secret are synthetic. The public receiver and consent mapping
+// are confirmed Studio46 settings; offline tests do not prove live acceptance.
+const LEGAL = { legitimateInterest: { value: true, subscriptionTypeId: 708833434,
+  legalBasis: "LEAD", text: `${enquiryForm.privacy_notice} Privacy Policy.` } };
 const ENV = {
   ENQUIRY_ENABLED: "true", HUBSPOT_PORTAL_ID: "242183160", HUBSPOT_FORM_ID: FORM_ID,
   TURNSTILE_SECRET: "synthetic-test-secret", TURNSTILE_HOSTNAMES: "studio46.co.nz",
@@ -17,7 +20,7 @@ const ENV = {
 };
 const BODY = { firstname: "Test", lastname: "Person", email: "test@example.invalid",
   enquiry: "A synthetic measurement question.", turnstileToken: "synthetic-token", website: "", startedAt: NOW - 5000 };
-const VERIFIED = { success: true, action: "contact", hostname: "studio46.co.nz" };
+const VERIFIED = { success: true, action: "contact", hostname: "studio46.co.nz", challenge_ts: new Date(NOW - 5000).toISOString() };
 
 function request(body = BODY, { method = "POST", headers = {}, url = `${ORIGIN}/api/enquiry`, raw } = {}) {
   return new Request(url, {
@@ -26,15 +29,37 @@ function request(body = BODY, { method = "POST", headers = {}, url = `${ORIGIN}/
   });
 }
 
-function fixture({ env = {}, fetchImpl, timeoutMs = 100, context = CONTEXT } = {}) {
+function memoryRedemptions() {
+  const entries = new Map();
+  const writes = [];
+  return {
+    entries, writes,
+    async set(key, value, options) {
+      writes.push({ key, value, options });
+      assert.deepEqual(options, { onlyIfNew: true });
+      if (entries.has(key)) return { modified: false };
+      entries.set(key, value);
+      return { modified: true };
+    },
+  };
+}
+
+function fixture({ env = {}, fetchImpl, timeoutMs = 100, context = CONTEXT, redemptionStoreFactory } = {}) {
   const calls = [];
+  const storage = memoryRedemptions();
+  const storageOpens = [];
   const fetchStub = async (url, options) => {
     calls.push({ url, options });
     if (fetchImpl) return fetchImpl(url, options, calls.length);
     return Response.json(url.includes("siteverify") ? VERIFIED : { inlineMessage: "Accepted" });
   };
-  const handler = createEnquiryHandler({ env: { ...ENV, ...env }, fetchImpl: fetchStub, now: () => NOW, timeoutMs });
-  return { calls, run: (req = request(), ctx = context) => handler(req, ctx) };
+  const handler = createEnquiryHandler({ env: { ...ENV, ...env }, fetchImpl: fetchStub, now: () => NOW, timeoutMs,
+    redemptionStoreFactory: () => {
+      storageOpens.push(true);
+      return redemptionStoreFactory ? redemptionStoreFactory() : storage;
+    },
+  });
+  return { calls, storage, storageOpens, run: (req = request(), ctx = context) => handler(req, ctx) };
 }
 
 test("Netlify exports a path-specific, per-IP/domain rate limit", () => {
@@ -53,6 +78,7 @@ test("default-off activation and non-published/non-production context never make
     ["local/missing trusted context", { context: {} }],
   ]) await t.test(name, async () => {
     const f = fixture(options); assert.equal((await f.run()).status, 503); assert.equal(f.calls.length, 0);
+    assert.equal(f.storageOpens.length, 0);
   });
 });
 
@@ -61,6 +87,7 @@ test("unsafe or incomplete server configuration fails closed", async t => {
     ["existing live form forbidden", { HUBSPOT_FORM_ID: "bcadce91-e864-465a-b098-ed0207be334c" }],
     ["existing live form uppercase forbidden", { HUBSPOT_FORM_ID: "BCADCE91-E864-465A-B098-ED0207BE334C" }],
     ["different portal", { HUBSPOT_PORTAL_ID: "123" }],
+    ["another valid receiver GUID cannot receive this consent mapping", { HUBSPOT_FORM_ID: "11111111-2222-4333-8444-555555555555" }],
     ["missing form", { HUBSPOT_FORM_ID: "" }],
     ["malformed form UUID", { HUBSPOT_FORM_ID: "-".repeat(36) }],
     ["missing secret", { TURNSTILE_SECRET: "" }],
@@ -138,12 +165,138 @@ test("failed/mismatched/malformed Siteverify responses never reach HubSpot", asy
   ]) await t.test(name, async () => {
     const f = fixture({ fetchImpl: async () => Response.json(result, { status }) });
     assert.equal((await f.run()).status, 403); assert.equal(f.calls.length, 1);
+    assert.equal(f.storageOpens.length, 0);
     assert.match(f.calls[0].url, /siteverify$/);
   });
   const malformed = fixture({ fetchImpl: async () => new Response("not JSON") });
   assert.equal((await malformed.run()).status, 403); assert.equal(malformed.calls.length, 1);
   const offline = fixture({ fetchImpl: async () => { throw new Error("network unavailable"); } });
   assert.equal((await offline.run()).status, 403); assert.equal(offline.calls.length, 1);
+});
+
+test("missing, malformed, stale and excessive-future challenge timestamps cannot claim or forward", async t => {
+  for (const [name, challenge_ts] of [
+    ["missing timestamp", undefined],
+    ["null timestamp", null],
+    ["numeric timestamp", NOW - 5000],
+    ["unparseable timestamp", "not-a-timestamp"],
+    ["date without UTC time", new Date(NOW).toISOString().slice(0, 10)],
+    ["calendar-invalid timestamp", "2027-02-30T12:00:00Z"],
+    ["expired by one millisecond", new Date(NOW - 300_001).toISOString()],
+    ["future beyond clock skew", new Date(NOW + 30_001).toISOString()],
+  ]) await t.test(name, async () => {
+    const f = fixture({ fetchImpl: async () => Response.json({ ...VERIFIED, challenge_ts }) });
+    const result = await f.run();
+    assert.equal(result.status, 403);
+    assert.equal((await result.json()).code, "verification_failed");
+    assert.equal(f.storageOpens.length, 0);
+    assert.equal(f.calls.length, 1);
+  });
+});
+
+test("challenge timestamp permits the five-minute boundary and bounded clock skew", async t => {
+  for (const age of [300_000, 0, -30_000]) await t.test(String(age), async () => {
+    const f = fixture({ fetchImpl: async url => Response.json(url.includes("siteverify")
+      ? { ...VERIFIED, challenge_ts: new Date(NOW - age).toISOString() } : {}) });
+    assert.equal((await f.run()).status, 200);
+    assert.equal(f.storage.writes.length, 1);
+    assert.equal(f.calls.length, 2);
+  });
+});
+
+test("valid UTC challenge timestamps allow absent or higher-precision fractional seconds", async t => {
+  for (const challenge_ts of [
+    VERIFIED.challenge_ts.replace(".000Z", "Z"),
+    VERIFIED.challenge_ts.replace(".000Z", ".123456789Z"),
+  ]) await t.test(challenge_ts, async () => {
+    const f = fixture({ fetchImpl: async url => Response.json(url.includes("siteverify")
+      ? { ...VERIFIED, challenge_ts } : {}) });
+    assert.equal((await f.run()).status, 200);
+    assert.equal(f.storage.writes.length, 1);
+  });
+});
+
+test("redemption claims only the SHA-256 token key with a constant non-PII value", async () => {
+  const f = fixture();
+  assert.equal((await f.run()).status, 200);
+  assert.deepEqual(f.storage.writes, [{
+    key: createHash("sha256").update(BODY.turnstileToken).digest("hex"),
+    value: "redeemed",
+    options: { onlyIfNew: true },
+  }]);
+  const stored = JSON.stringify(f.storage.writes);
+  for (const sensitive of [BODY.turnstileToken, BODY.firstname, BODY.lastname, BODY.email,
+    BODY.enquiry, ENV.TURNSTILE_SECRET, CONTEXT.ip]) assert.equal(stored.includes(sensitive), false);
+});
+
+test("a replay is rejected even when Siteverify reports success for the same token twice", async () => {
+  const f = fixture();
+  assert.equal((await f.run()).status, 200);
+  const replay = await f.run();
+  assert.equal(replay.status, 403);
+  assert.equal((await replay.json()).code, "verification_failed");
+  assert.equal(f.storage.writes.length, 2);
+  assert.equal(f.calls.filter(call => call.url.includes("siteverify")).length, 2);
+  assert.equal(f.calls.filter(call => call.url.includes("api.hsforms.com")).length, 1);
+});
+
+test("concurrent handler instances with the same verified token forward at most once", async () => {
+  const shared = memoryRedemptions();
+  const first = fixture({ redemptionStoreFactory: () => shared });
+  const second = fixture({ redemptionStoreFactory: () => shared });
+  const results = await Promise.all([first.run(), second.run()]);
+  assert.deepEqual(results.map(result => result.status).sort(), [200, 403]);
+  const calls = [...first.calls, ...second.calls];
+  assert.equal(calls.filter(call => call.url.includes("siteverify")).length, 2);
+  assert.equal(calls.filter(call => call.url.includes("api.hsforms.com")).length, 1);
+  assert.equal(shared.entries.size, 1);
+  assert.equal(shared.writes.length, 2);
+});
+
+test("storage creation, write failures and non-boolean claim results fail closed", async t => {
+  const cases = [
+    ["store cannot open", () => { throw new Error("unavailable"); }],
+    ["store write rejects", () => ({ set: async () => { throw new Error("write failed"); } })],
+    ...[undefined, null, {}, { modified: "true" }, { modified: 1 }]
+      .map(value => [`invalid result ${JSON.stringify(value)}`, () => ({ set: async () => value })]),
+  ];
+  for (const [name, redemptionStoreFactory] of cases) await t.test(name, async () => {
+    const f = fixture({ redemptionStoreFactory });
+    const result = await f.run();
+    assert.equal(result.status, 503);
+    const body = await result.json();
+    assert.equal(body.code, "unavailable");
+    assert.equal(body.accepted, false);
+    assert.equal(f.calls.length, 1);
+  });
+});
+
+test("a storage claim has a deadline and never forwards while pending or after a late result", async () => {
+  let finishClaim;
+  const f = fixture({ timeoutMs: 5, redemptionStoreFactory: () => ({
+    set: () => new Promise(resolve => { finishClaim = resolve; }),
+  }) });
+  const pending = f.run();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(f.calls.length, 1);
+  const result = await pending;
+  assert.equal(result.status, 503);
+  finishClaim({ modified: true });
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(f.calls.length, 1);
+});
+
+test("claims are retained after an uncertain HubSpot attempt so the token cannot retry delivery", async () => {
+  const f = fixture({ fetchImpl: async url => {
+    if (url.includes("siteverify")) return Response.json(VERIFIED);
+    throw new Error("connection lost after the request was sent");
+  } });
+  const first = await f.run();
+  assert.equal((await first.json()).code, "delivery_unconfirmed");
+  const replay = await f.run();
+  assert.equal(replay.status, 403);
+  assert.equal(f.storage.entries.size, 1);
+  assert.equal(f.calls.filter(call => call.url.includes("api.hsforms.com")).length, 1);
 });
 
 test("Siteverify has a fail-closed deadline and abort signal", async () => {
@@ -194,10 +347,38 @@ test("email stays required; blank optional names/enquiry do not overwrite existi
   assert.deepEqual(JSON.parse(f.calls[1].options.body).fields, [{ objectTypeId: "0-1", name: "email", value: BODY.email }]);
 });
 
-test("the other documented legitimate-interest submission enum is accepted explicitly", async () => {
-  const f = fixture({ env: { HUBSPOT_LEGAL_CONSENT_JSON: JSON.stringify({ legitimateInterest: { ...LEGAL.legitimateInterest, legalBasis: "CUSTOMER" } }) } });
-  assert.equal((await f.run()).status, 200);
-  assert.equal(JSON.parse(f.calls[1].options.body).legalConsentOptions.legitimateInterest.legalBasis, "CUSTOMER");
+test("tracked consent and environment example pin One to One with the unchanged complete notice", () => {
+  assert.equal(enquiryForm.hubspot_consent.subscriptionTypeId, 708833434);
+  assert.equal(enquiryForm.hubspot_consent.legalBasis, "LEAD");
+  const example = readFileSync(new URL("../.env.example", import.meta.url), "utf8");
+  const value = example.split("\n").find(line => line.startsWith("HUBSPOT_LEGAL_CONSENT_JSON=")).split("=", 2)[1];
+  assert.deepEqual(JSON.parse(value.slice(1, -1)), LEGAL);
+  assert.match(example, /^HUGO_ENQUIRY_ENABLED=false$/m);
+  assert.match(example, /^ENQUIRY_ENABLED=false$/m);
+});
+
+test("unreviewed subscription, basis and notice drift fail before either upstream request", async t => {
+  const expected = LEGAL.legitimateInterest;
+  const invalid = [
+    ["marketing subscription is excluded", { ...expected, subscriptionTypeId: 708833433 }],
+    ["other positive ID is not the reviewed mapping", { ...expected, subscriptionTypeId: 999 }],
+    ["subscription ID must retain its numeric type", { ...expected, subscriptionTypeId: "708833434" }],
+    ["multiple subscription IDs are not this API schema", { ...expected, subscriptionTypeId: [708833434, 708833433] }],
+    ["CUSTOMER is documented but not the reviewed LEAD basis", { ...expected, legalBasis: "CUSTOMER" }],
+    ["lowercase form-definition basis is not accepted", { ...expected, legalBasis: "lead" }],
+    ["changed notice cannot imply a different permission", { ...expected, text: "Please subscribe me to marketing." }],
+    ["missing privacy link label is notice drift", { ...expected, text: enquiryForm.privacy_notice }],
+    ["notice whitespace drift must be reviewed", { ...expected, text: expected.text + " " }],
+    ["legitimate interest must be explicitly true", { ...expected, value: false }],
+    ["extra communications permission is rejected", { ...expected, communications: [{ value: true }] }],
+  ];
+  for (const [name, interest] of invalid) await t.test(name, async () => {
+    const f = fixture({ env: { HUBSPOT_LEGAL_CONSENT_JSON: JSON.stringify({ legitimateInterest: interest }) } });
+    const result = await f.run();
+    assert.equal(result.status, 503);
+    assert.equal((await result.json()).accepted, false);
+    assert.equal(f.calls.length, 0);
+  });
 });
 
 test("HubSpot errors, malformed responses and non-200 statuses never produce success", async t => {

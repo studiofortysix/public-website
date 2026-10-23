@@ -47,6 +47,7 @@ I may share data with trusted third-party tools or service providers, such as:
 - **CRM or project management tools** – to manage communication and services
 - **HubSpot** – to store website enquiries and manage follow-up
 - **Cloudflare Turnstile** – to help protect the contact form against automated spam. Cloudflare processes technical verification signals as described in its [Turnstile Privacy Addendum](https://www.cloudflare.com/turnstile-privacy-policy/).
+- **Netlify** – to host the website and run server-side spam checks. A one-way fingerprint of an accepted verification token is stored to prevent its reuse; this record contains no enquiry details.
 
 I only share what’s necessary and only with secure, reputable platforms.
 
