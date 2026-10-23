@@ -27,9 +27,20 @@ The original full Markdown migration is retained in commit d7bd009.
 There is no second unrendered service/work copy to maintain in the current pages.
 
 Review
-Run Hugo from this worktree directory. For a local preview that disables GTM,
-HubSpot tracking and form submission:
+Run Hugo from this worktree directory. For a local preview that disables GTM
+and the site-wide HubSpot tracking script:
   hugo server --environment review --bind 127.0.0.1 --port 1314
 
-Production keeps the existing HubSpot integration. Do not use the review HTML
-as a production form implementation. No deployment has been made.
+The review contact page loads the real HubSpot form only when the reviewer
+chooses Load enquiry form. Loading connects to HubSpot, including its form
+analytics; submitting sends a real enquiry. Do not send synthetic enquiries.
+Production loads the form automatically. Both use the same published form:
+  Portal: 242183160 (na2)
+  Form: bcadce91-e864-465a-b098-ed0207be334c
+  Fields: firstname, lastname, email (required), enquiry
+  Existing CAPTCHA and legitimate-interest privacy setup remain in HubSpot.
+The form is the updated-editor embed. It renders in HubSpot's iframe. Its
+CAPTCHA prevents using the custom Forms API submission route. Do not remove
+CAPTCHA or recreate consent/subscription choices to bypass that restriction.
+Integration: layouts/partials/hubspot-form.html and assets/js/hubspot-form.js.
+No deployment or form submission has been made.

@@ -1065,11 +1065,38 @@ summary {
   margin-top: 0;
 }
 .s46-contact-panel {
+  min-width: 0;
+  --s46-contact-inset: 34px;
   align-self: start;
-  padding: 34px;
+  padding: var(--s46-contact-inset);
   background: var(--s46-surface);
   border: 1px solid var(--s46-line);
   border-radius: 10px;
+}
+.s46-hubspot-form {
+  color-scheme: light;
+}
+.s46-hubspot-form [data-form-target] {
+  /* The hosted form supplies its own inner padding. */
+  margin-inline: calc(-1 * var(--s46-contact-inset));
+  background: #fff;
+  border-radius: 6px;
+}
+.s46-hubspot-form:not([data-ready]) .hs-form-frame {
+  min-height: 640px;
+}
+.s46-hubspot-form [hidden] {
+  display: none !important;
+}
+.s46-load-form {
+  cursor: pointer;
+  border: 0;
+  font-family: inherit;
+}
+.s46-form-status {
+  font-size: 13px;
+  color: var(--s46-muted);
+  margin: 16px 0;
 }
 .s46-contact-panel h2 {
   font-size: 30px;
@@ -1700,7 +1727,7 @@ summary {
     margin-bottom: 45px;
   }
   .s46-contact-panel {
-    padding: 26px;
+    --s46-contact-inset: 26px;
   }
   .s46-contact-panel h2 {
     font-size: 29px;
@@ -1737,6 +1764,13 @@ summary {
   }
   .s46-footer-bottom > span:last-child {
     width: 100%;
+  }
+}
+@media (max-width: 360px) {
+  .s46-contact-panel {
+    margin-inline: -20px;
+    border-inline: 0;
+    border-radius: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {

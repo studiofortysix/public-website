@@ -5,12 +5,7 @@
     <div class="s46-prose">{{ .Content | replaceRE `^<p>[^<]*</p>\s*` "" | safeHTML }}</div>
     <aside class="s46-contact-panel">
       <p class="s46-eyebrow">Discuss your project</p><h2>Tell me a little about your project.</h2>
-      {{ if site.Params.review_mode }}
-        <div class="s46-review-notice"><span class="s46-dot"></span><div><strong>Preview only</strong><p>Local review: form submission is disabled. The existing HubSpot form is retained for production.</p></div></div>
-      {{ else }}
-        <script src="https://js-na2.hsforms.net/forms/embed/242183160.js" defer></script>
-        <div class="hs-form-frame" data-region="na2" data-form-id="bcadce91-e864-465a-b098-ed0207be334c" data-portal-id="242183160"></div>
-      {{ end }}
+      {{ partial "hubspot-form.html" . }}
       <p class="s46-small">Prefer email? <a href="mailto:warrick@studio46.co.nz">warrick@studio46.co.nz</a></p>
     </aside>
   </div>

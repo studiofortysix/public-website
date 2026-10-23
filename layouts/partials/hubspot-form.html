@@ -1,0 +1,12 @@
+{{/* Preserve this published form's CAPTCHA, consent model and field mapping. */}}
+<div class="s46-hubspot-form" data-s46-hubspot data-review="{{ if site.Params.review_mode }}true{{ else }}false{{ end }}">
+  {{ if site.Params.review_mode }}
+    <div class="s46-review-notice"><span class="s46-dot"></span><div><strong>Live HubSpot form</strong><p>The website is unpublished. Loading the form connects to HubSpot; submitting it sends a real enquiry to Studio 46.</p></div></div>
+    <button class="s46-button s46-load-form" type="button" data-load-form>Load enquiry form <span aria-hidden="true">↗</span></button>
+  {{ end }}
+  <p class="s46-form-status" data-form-status role="status" aria-live="polite"{{ if site.Params.review_mode }} hidden{{ end }}>Loading the enquiry form…</p>
+  <div data-form-target data-region="na2" data-form-id="bcadce91-e864-465a-b098-ed0207be334c" data-portal-id="242183160"></div>
+  <noscript><p>Please enable JavaScript to use the enquiry form, or email <a href="mailto:warrick@studio46.co.nz">warrick@studio46.co.nz</a>.</p></noscript>
+</div>
+{{ $formScript := resources.Get "js/hubspot-form.js" | minify | fingerprint }}
+<script src="{{ $formScript.RelPermalink }}" integrity="{{ $formScript.Data.Integrity }}" defer></script>
