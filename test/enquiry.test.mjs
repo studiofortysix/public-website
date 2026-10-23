@@ -3,7 +3,12 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import enquiryForm from "../data/enquiry_form.json" with { type: "json" };
-import { createEnquiryHandler, config } from "../netlify/functions/enquiry.mjs";
+import { createEnquiryHandler, createRedemptionStore, config } from "../netlify/functions/enquiry.mjs";
+
+// Exercise the installed SDK with injected HTTP only. Its test setting reduces
+// retry delays; no Netlify credentials, network or live stores are used.
+process.env.NODE_ENV = "test";
+const { getStore } = await import("@netlify/blobs");
 
 const NOW = 1_800_000_000_000;
 const ORIGIN = "https://studio46.co.nz";
@@ -39,7 +44,7 @@ function memoryRedemptions() {
       assert.deepEqual(options, { onlyIfNew: true });
       if (entries.has(key)) return { modified: false };
       entries.set(key, value);
-      return { modified: true };
+      return { modified: true, etag: "offline-memory-etag" };
     },
   };
 }
@@ -257,7 +262,9 @@ test("storage creation, write failures and non-boolean claim results fail closed
   const cases = [
     ["store cannot open", () => { throw new Error("unavailable"); }],
     ["store write rejects", () => ({ set: async () => { throw new Error("write failed"); } })],
-    ...[undefined, null, {}, { modified: "true" }, { modified: 1 }]
+    ...[undefined, null, {}, { modified: "true" }, { modified: 1 },
+      { modified: true }, { modified: true, etag: "" }, { modified: true, etag: " " },
+      { modified: true, etag: 123 }]
       .map(value => [`invalid result ${JSON.stringify(value)}`, () => ({ set: async () => value })]),
   ];
   for (const [name, redemptionStoreFactory] of cases) await t.test(name, async () => {
@@ -271,6 +278,68 @@ test("storage creation, write failures and non-boolean claim results fail closed
   });
 });
 
+function sdkRedemptionStore(status, etag) {
+  const requests = [];
+  const store = createRedemptionStore((name, options) => {
+    assert.equal(name, "studio46-enquiry-redemptions-v1");
+    assert.equal(options.region, "us-east-2");
+    return getStore({
+      name, ...options, siteID: "offline-site", token: "offline-placeholder",
+      edgeURL: "https://offline.invalid",
+    });
+  }, async (input, init) => {
+    // All actual SDK HTTP requests terminate in this stub, including retries.
+    assert.equal(new URL(input).origin, "https://offline.invalid");
+    requests.push({ input, init });
+    return new Response("", { status, headers: etag === undefined ? {} : { etag } });
+  });
+  return { store, requests };
+}
+
+test("actual Blobs SDK rejects failed conditional HTTP writes even with an ETag", async t => {
+  for (const status of [403, 500, 503]) {
+    for (const etag of [undefined, "misleading-error-etag"]) {
+      await t.test(`${status}, ETag ${etag ?? "missing"}`, async () => {
+        const sdk = sdkRedemptionStore(status, etag);
+        const f = fixture({ timeoutMs: 500, redemptionStoreFactory: () => sdk.store });
+        const response = await f.run();
+        assert.equal(response.status, 503);
+        assert.equal((await response.json()).accepted, false);
+        assert.equal(f.calls.filter(call => call.url.includes("api.hsforms.com")).length, 0);
+        assert.ok(sdk.requests.length > 0);
+        for (const { init } of sdk.requests) {
+          assert.equal(init.headers["if-none-match"], "*");
+          assert.equal(init.body, "redeemed");
+        }
+      });
+    }
+  }
+});
+
+test("actual Blobs SDK forwards only a successful conditional write with an ETag", async t => {
+  for (const [name, status, etag, expected] of [
+    ["confirmed claim", 200, "offline-success-etag", 200],
+    ["HTTP success without ETag", 200, undefined, 503],
+    ["HTTP success with empty ETag", 200, "", 503],
+    ["already claimed", 412, undefined, 403],
+    ["already claimed with ETag", 412, "existing-etag", 403],
+  ]) await t.test(name, async () => {
+    const sdk = sdkRedemptionStore(status, etag);
+    const f = fixture({ timeoutMs: 500, redemptionStoreFactory: () => sdk.store });
+    const response = await f.run();
+    assert.equal(response.status, expected);
+    assert.equal((await response.json()).accepted, expected === 200);
+    assert.equal(f.calls.filter(call => call.url.includes("api.hsforms.com")).length, expected === 200 ? 1 : 0);
+    assert.equal(sdk.requests.length, 1);
+    const { input, init } = sdk.requests[0];
+    assert.equal(new URL(input).pathname,
+      `/region:us-east-2/offline-site/site:studio46-enquiry-redemptions-v1/${createHash("sha256").update(BODY.turnstileToken).digest("hex")}`);
+    assert.equal(init.method, "put");
+    assert.equal(init.headers["if-none-match"], "*");
+    assert.equal(init.body, "redeemed");
+  });
+});
+
 test("a storage claim has a deadline and never forwards while pending or after a late result", async () => {
   let finishClaim;
   const f = fixture({ timeoutMs: 5, redemptionStoreFactory: () => ({
@@ -281,7 +350,7 @@ test("a storage claim has a deadline and never forwards while pending or after a
   assert.equal(f.calls.length, 1);
   const result = await pending;
   assert.equal(result.status, 503);
-  finishClaim({ modified: true });
+  finishClaim({ modified: true, etag: "offline-late-etag" });
   await new Promise(resolve => setImmediate(resolve));
   assert.equal(f.calls.length, 1);
 });

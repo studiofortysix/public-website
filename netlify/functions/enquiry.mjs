@@ -74,11 +74,27 @@ function recentChallenge(value, currentTime) {
   return age >= -CHALLENGE_CLOCK_SKEW_MS && age <= MAX_CHALLENGE_AGE_MS;
 }
 
+export function createRedemptionStore(getStore, fetchImpl = globalThis.fetch) {
+  return getStore(REDEMPTION_STORE, {
+    region: "us-east-2",
+    // SDK 11.1.6 can report modified:true for failed conditional writes. Reject
+    // transport failures before that result is constructed, including errors
+    // carrying an ETag. A 412 remains the normal already-redeemed result.
+    fetch: async (input, init) => {
+      const response = await fetchImpl(input, init);
+      if (!response.ok && response.status !== 412) {
+        throw new Error("redemption storage request failed");
+      }
+      return response;
+    },
+  });
+}
+
 async function openRedemptionStore() {
   // Load only after production gating and successful verification. Netlify
   // supplies the current site's Blobs credentials; no token is stored in code.
   const { getStore } = await import("@netlify/blobs");
-  return getStore(REDEMPTION_STORE, { region: "us-east-2" });
+  return createRedemptionStore(getStore);
 }
 
 async function redeemToken(token, storeFactory, timeoutMs) {
@@ -99,6 +115,9 @@ async function redeemToken(token, storeFactory, timeoutMs) {
     ]);
     if (!record(result) || typeof result.modified !== "boolean") {
       throw new Error("invalid redemption storage result");
+    }
+    if (result.modified && (typeof result.etag !== "string" || !result.etag.trim())) {
+      throw new Error("unconfirmed redemption storage write");
     }
     return result.modified === true;
   } finally {
