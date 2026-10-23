@@ -123,9 +123,9 @@
       );
     } finally {
       busy = false;
+      locked = uncertain;
       // Tokens are single-use. Every retry must obtain a fresh token.
       resetSpamCheck();
-      locked = uncertain;
       updateButton();
       result.focus();
     }
@@ -143,6 +143,7 @@
   }
 
   window.studio46TurnstileReady = () => {
+    if (sent || locked) return;
     widgetId = window.turnstile.render(
       form.querySelector("[data-spam-check]"),
       {
@@ -153,14 +154,17 @@
           : "light",
         size: "flexible",
         callback: (value) => {
+          if (sent || locked) return;
           token = value;
           updateButton();
         },
         "expired-callback": () => {
+          if (sent || locked) return;
           token = "";
           updateButton();
         },
         "error-callback": () => {
+          if (sent || locked) return;
           token = "";
           updateButton();
           message(
@@ -176,10 +180,12 @@
     "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=studio46TurnstileReady";
   script.async = true;
   script.defer = true;
-  script.onerror = () =>
+  script.onerror = () => {
+    if (sent || locked) return;
     message(
       "The spam check could not load. Please use the email address below.",
       "error",
     );
+  };
   form.appendChild(script);
 })();

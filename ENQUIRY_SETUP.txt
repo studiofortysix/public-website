@@ -1,7 +1,23 @@
-Studio 46 native enquiry form - review preparation
+Studio 46 native enquiry form - launch status and archived preparation
 23 October 2026
 
-CURRENT STATE
+LAUNCH STATUS
+Published with Warrick's approval on 23 October 2026. The separate HubSpot
+receiver is now Published as "Website enquiry – native API". Both Netlify
+production activation flags are true. A controlled live enquiry reached HubSpot
+and its matching notification arrived in warrick@studio46.co.nz's inbox at
+2:49 pm NZDT. The test contact is non-marketing, with One to One subscribed and
+Marketing Information Not Specified. The original Contact Us Form remains
+Published and unchanged, with its 5 September 2025 edit date and nine submissions.
+
+The actual enquiry exercised the deployed relay and its required atomic claim.
+Offline replay/storage-failure checks passed. A direct live token replay and a
+live rate-limit burst were not performed; do not describe those as live passes.
+The final launch record is saved with the task's Studio46_Launch_Notes.html and
+Studio46_Launch_Verification.json deliverables. The preparation below is retained
+as a historical record; its draft-only and sending-disabled states are superseded.
+
+ARCHIVED STATE AT PRE-ACTIVATION REVIEW
 The native form and server handler are on the review branch. Sending defaults off
 at both the build and server layers. Review submission stays entirely local.
 No Netlify deployment, DNS change, real enquiry or notification test was made.

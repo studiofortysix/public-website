@@ -43,6 +43,7 @@ function setup({
   sitekey = '',
   protocol = 'https:',
   dark = false,
+  errorOnReset = false,
   fetchHandler = async () => { throw new Error('Unexpected mocked request'); },
 } = {}) {
   const button = new Element({ disabled: true });
@@ -80,7 +81,10 @@ function setup({
   const window = {
     turnstile: {
       render(target, options) { renders.push({ target, options }); return widgetId; },
-      reset(id) { resets.push(id); },
+      reset(id) {
+        resets.push(id);
+        if (errorOnReset) renders.at(-1).options['error-callback']();
+      },
     },
   };
   const context = vm.createContext({
@@ -285,6 +289,47 @@ test('success requires both an HTTP success and the literal accepted:true', asyn
       }
     });
   }
+});
+
+test('terminal delivery messages survive reset errors and late Turnstile callbacks', async t => {
+  for (const [name, fetchHandler, expected, state, label] of [
+    ['confirmed', async () => response(true, { accepted: true }),
+      'Thank you. Your enquiry has been received.', 'success', 'Enquiry sent'],
+    ['unconfirmed', async () => response(false, { code: 'delivery_unconfirmed' }),
+      'We could not confirm delivery. Please email Warrick before trying again.', 'error', 'Please email to confirm'],
+    ['ambiguous success', async () => response(true, {}),
+      'We could not confirm delivery. Please email Warrick before trying again.', 'error', 'Please email to confirm'],
+    ['network failure', async () => { throw new Error('Offline test failure'); },
+      'We could not confirm delivery. Please email Warrick before trying again.', 'error', 'Please email to confirm'],
+  ]) await t.test(name, async () => {
+    const h = configured({ fetchHandler, errorOnReset: true });
+    const original = values(h);
+    await h.submit();
+    const assertTerminal = () => {
+      assert.equal(h.result.textContent, expected);
+      assert.equal(h.result.dataset.state, state);
+      assert.equal(h.result.hidden, false);
+      assert.equal(h.buttonText.textContent, label);
+      assert.equal(h.button.disabled, true);
+      assert.equal(h.form.getAttribute('aria-busy'), 'false');
+      assert.deepEqual(values(h), original);
+      assert.equal(h.requests.length, 1);
+    };
+    // reset() can invoke an error immediately, before the submit handler returns.
+    assertTerminal();
+    assert.deepEqual(h.resets, [h.widgetId]);
+    for (const callback of [
+      () => h.widgetError(), () => h.expire(), () => h.token('late-token'),
+      () => h.scripts[0].onerror(), () => h.ready(),
+    ]) {
+      callback();
+      assertTerminal();
+      await h.submit();
+      assertTerminal();
+    }
+    assert.equal(h.renders.length, 1);
+    assert.equal(h.result.focusCount, 1);
+  });
 });
 
 
