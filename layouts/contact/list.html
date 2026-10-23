@@ -5,7 +5,7 @@
     <div class="s46-prose">{{ .Content | replaceRE `^<p>[^<]*</p>\s*` "" | safeHTML }}</div>
     <aside class="s46-contact-panel">
       <p class="s46-eyebrow">Discuss your project</p><h2>Tell me a little about your project.</h2>
-      {{ partial "hubspot-form.html" . }}
+      {{ partial "enquiry-form.html" . }}
       <p class="s46-small">Prefer email? <a href="mailto:warrick@studio46.co.nz">warrick@studio46.co.nz</a></p>
     </aside>
   </div>

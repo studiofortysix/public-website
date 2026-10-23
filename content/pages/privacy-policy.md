@@ -7,7 +7,7 @@ draft: false
 
 ## Privacy Policy
 
-**Last updated: 8 August 2025**
+**Last updated: 23 October 2026**
 
 At Studio 46, I take your privacy seriously. This policy explains what personal information I collect, how I use it, and your rights in relation to that data.
 
@@ -18,6 +18,7 @@ Depending on how you interact with this site or my services, I may collect:
 - **Contact details**: Name, email address, phone number, company name.
 - **Analytics data**: Website usage information via tools like Google Analytics (IP address, browser, pages visited, etc.).
 - **Form submissions**: Any information you provide when contacting me or requesting services.
+- **Spam prevention data**: Technical information, such as your IP address and browser details, used to check whether a contact form submission is automated.
 - **Marketing data**: If you opt-in to receive updates or marketing communications.
 
 I do not knowingly collect personal information from children under 16.
@@ -44,6 +45,8 @@ I may share data with trusted third-party tools or service providers, such as:
 - **Google Analytics / Tag Manager** – to measure performance and user flow  
 - **Email platforms** – to send newsletters (if you’ve opted in)  
 - **CRM or project management tools** – to manage communication and services
+- **HubSpot** – to store website enquiries and manage follow-up
+- **Cloudflare Turnstile** – to help protect the contact form against automated spam. Cloudflare processes technical verification signals as described in its [Turnstile Privacy Addendum](https://www.cloudflare.com/turnstile-privacy-policy/).
 
 I only share what’s necessary and only with secure, reputable platforms.
 

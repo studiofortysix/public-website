@@ -2,6 +2,10 @@
   publish = "public"
   command = "yarn build"
 
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
 # Redirect /index.html to /
 [[redirects]]
 from = "/index.html"

@@ -5,6 +5,7 @@
   "license": "MIT",
   "author": "zeon.studio",
   "scripts": {
+    "test:enquiry": "node --test test/enquiry.test.mjs test/enquiry-form.test.cjs",
     "dev": "hugo server",
     "build": "hugo --gc --cleanDestinationDir --minify --templateMetrics --templateMetricsHints --forceSyncStatic",
     "preview": "hugo server --disableFastRender --navigateToChanged --templateMetrics --templateMetricsHints --watch --forceSyncStatic -e production --minify",

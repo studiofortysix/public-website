@@ -31,16 +31,18 @@ Run Hugo from this worktree directory. For a local preview that disables GTM
 and the site-wide HubSpot tracking script:
   hugo server --environment review --bind 127.0.0.1 --port 1314
 
-The review contact page loads the real HubSpot form only when the reviewer
-chooses Load enquiry form. Loading connects to HubSpot, including its form
-analytics; submitting sends a real enquiry. Do not send synthetic enquiries.
-Production loads the form automatically. Both use the same published form:
-  Portal: 242183160 (na2)
-  Form: bcadce91-e864-465a-b098-ed0207be334c
-  Fields: firstname, lastname, email (required), enquiry
-  Existing CAPTCHA and legitimate-interest privacy setup remain in HubSpot.
-The form is the updated-editor embed. It renders in HubSpot's iframe. Its
-CAPTCHA prevents using the custom Forms API submission route. Do not remove
-CAPTCHA or recreate consent/subscription choices to bypass that restriction.
-Integration: layouts/partials/hubspot-form.html and assets/js/hubspot-form.js.
-No deployment or form submission has been made.
+The contact page now uses native fields and the site's styles. Review submission
+validates email locally and displays an explicit no-send message. It never loads
+HubSpot or Turnstile and never sends entered data. Production sending defaults off.
+
+Native form: layouts/partials/enquiry-form.html and assets/js/enquiry-form.js.
+Privacy copy: data/enquiry_form.json. Server handler: netlify/functions/enquiry.mjs.
+The existing HubSpot embed partial and script remain unused for reference/rollback.
+The original live form bcadce91-e864-465a-b098-ed0207be334c is unchanged. The server
+explicitly refuses that ID. A separate receiver is prepared in HubSpot account
+242183160; configuration and activation requirements are in ENQUIRY_SETUP.txt.
+
+No website deployment or enquiry submission has been made. HubSpot's Clone action
+unexpectedly created the separate copy as Published; it was then unpublished.
+The existing live form was never edited. The new receiver must remain unpublished
+until separately approved. Do not describe the integration as live-tested.

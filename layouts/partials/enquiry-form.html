@@ -1,0 +1,23 @@
+{{ $review := site.Params.review_mode | default false }}
+{{ $enabled := and (not $review) (eq (getenv "HUGO_ENQUIRY_ENABLED") "true") }}
+{{ $sitekey := getenv "HUGO_TURNSTILE_SITEKEY" }}
+{{ if $review }}
+<p class="s46-form-preview"><span class="s46-dot" aria-hidden="true"></span>Review preview. Nothing you enter here is sent.</p>
+{{ end }}
+<form class="s46-enquiry-form" data-s46-enquiry data-review="{{ $review }}" data-enabled="{{ $enabled }}" data-sitekey="{{ $sitekey }}" action="{{ `/api/enquiry` | relURL }}" method="post" aria-describedby="enquiry-guidance" novalidate data-hs-do-not-collect="true">
+  <p id="enquiry-guidance" class="s46-form-guidance">A few details are enough to start. Only email is required.</p>
+  <div class="s46-form-name-row">
+    <div class="s46-form-field"><label for="enquiry-firstname">First name</label><input id="enquiry-firstname" name="firstname" type="text" autocomplete="given-name" maxlength="100"></div>
+    <div class="s46-form-field"><label for="enquiry-lastname">Last name</label><input id="enquiry-lastname" name="lastname" type="text" autocomplete="family-name" maxlength="100"></div>
+  </div>
+  <div class="s46-form-field"><label for="enquiry-email">Email <span aria-hidden="true">*</span><span class="s46-sr-only"> (required)</span></label><input id="enquiry-email" name="email" type="email" autocomplete="email" maxlength="254" required aria-describedby="enquiry-email-error"><p id="enquiry-email-error" class="s46-field-error" hidden></p></div>
+  <div class="s46-form-field"><label for="enquiry-message">How can I help?</label><textarea id="enquiry-message" name="enquiry" rows="5" maxlength="4000" placeholder="Tell me what’s happening and what you need to understand."></textarea></div>
+  <div class="s46-form-trap" aria-hidden="true"><label for="enquiry-website">Leave this field empty</label><input id="enquiry-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+  <p class="s46-form-privacy">{{ site.Data.enquiry_form.privacy_notice }} <a href="{{ `privacy-policy/` | relURL }}">Privacy Policy</a>.</p>
+  <div data-spam-check class="s46-spam-check"></div>
+  <div class="s46-form-submit-row"><button class="s46-button" type="submit" data-submit-enquiry disabled><span data-button-text>Send enquiry</span><span aria-hidden="true">↗</span></button><span class="s46-form-security">Protected against automated submissions.</span></div>
+  <div class="s46-form-result" data-form-result role="status" aria-live="polite" tabindex="-1" hidden></div>
+  <noscript><p>Please enable JavaScript to use this form, or email <a href="mailto:warrick@studio46.co.nz">warrick@studio46.co.nz</a>.</p></noscript>
+</form>
+{{ $script := resources.Get "js/enquiry-form.js" | minify | fingerprint }}
+<script src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}" defer></script>
