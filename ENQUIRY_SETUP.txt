@@ -17,6 +17,26 @@ The final launch record is saved with the task's Studio46_Launch_Notes.html and
 Studio46_Launch_Verification.json deliverables. The preparation below is retained
 as a historical record; its draft-only and sending-disabled states are superseded.
 
+SUCCESSFUL ENQUIRY ANALYTICS CONTRACT - 24 OCTOBER 2026
+The browser queues studio46_enquiry_accepted only after the enquiry endpoint
+returns a successful HTTP response with the literal accepted:true. That endpoint
+requires HubSpot HTTP 200, valid JSON and no error marker. Clicking Send, invalid
+details, pending requests, failures and uncertain delivery do not emit this event.
+The success lock prevents duplicate events from repeated submits or callbacks.
+
+The dataLayer payload is restricted to three fixed values:
+event: studio46_enquiry_accepted
+form_id: studio46_enquiry
+form_name: website_enquiry
+No names, email addresses, message content, raw tokens, contact/submission IDs or
+URL parameters are included. Analytics failure does not change confirmed delivery.
+
+GTM-N9VBHGDD maps this custom event to GA4 generate_lead for G-H0QG7HB8FN,
+restricted to studio46.co.nz and /contact/. Its custom event parameters are the
+same fixed form_id and form_name values. Do not connect this conversion to clicks,
+generic form-submit attempts or contact-page views. CRM receipt and GA4 receipt
+must be verified separately; browser blocking can still prevent Analytics receipt.
+
 ARCHIVED STATE AT PRE-ACTIVATION REVIEW
 The native form and server handler are on the review branch. Sending defaults off
 at both the build and server layers. Review submission stays entirely local.

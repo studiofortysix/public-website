@@ -100,6 +100,16 @@
         sent = true;
         message("Thank you. Your enquiry has been received.", "success");
         // Keep the submitted values visible and prevent an accidental repeat.
+        try {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: "studio46_enquiry_accepted",
+            form_id: "studio46_enquiry",
+            form_name: "website_enquiry",
+          });
+        } catch {
+          // Analytics availability must not change confirmed delivery.
+        }
       } else {
         message(
           code === "RATE_LIMITED"

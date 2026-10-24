@@ -44,6 +44,7 @@ function setup({
   protocol = 'https:',
   dark = false,
   errorOnReset = false,
+  dataLayer,
   fetchHandler = async () => { throw new Error('Unexpected mocked request'); },
 } = {}) {
   const button = new Element({ disabled: true });
@@ -79,6 +80,7 @@ function setup({
   form.appendChild = child => scripts.push(child);
   const widgetId = 0; // A valid falsy ID must still be passed to reset().
   const window = {
+    dataLayer,
     turnstile: {
       render(target, options) { renders.push({ target, options }); return widgetId; },
       reset(id) {
@@ -106,6 +108,7 @@ function setup({
   return {
     form, button, buttonText, result, emailError, elements, scripts,
     requests, renders, resets, timeouts, widgetId, spamCheck,
+    get dataLayer() { return window.dataLayer; },
     submit: () => form.dispatch('submit'),
     input: () => elements.email.dispatch('input'),
     ready() { window.studio46TurnstileReady(); },
@@ -130,6 +133,7 @@ function assertNoDeliveryClaim(harness) {
   assert.notEqual(harness.result.dataset.state, 'success');
   assert.doesNotMatch(harness.result.textContent, /thank you|has been received/i);
   assert.notEqual(harness.buttonText.textContent, 'Enquiry sent');
+  assert.equal(harness.dataLayer?.length ?? 0, 0);
 }
 
 test('review validates locally, retains entered values and never loads or sends externally', async () => {
@@ -259,6 +263,122 @@ test('in-flight and completed submissions cannot duplicate a delivery, and value
   assert.deepEqual(values(h), original);
   await h.submit();
   assert.equal(h.requests.length, 1);
+});
+
+test('accepted analytics waits for confirmed acceptance and emits one fixed non-personal event', async () => {
+  let resolveResponse;
+  let resolveBody;
+  let bodyRead;
+  const pendingResponse = new Promise(resolve => { resolveResponse = resolve; });
+  const pendingBody = new Promise(resolve => { resolveBody = resolve; });
+  const readingBody = new Promise(resolve => { bodyRead = resolve; });
+  const existing = { event: 'existing_event' };
+  const dataLayer = [existing];
+  let h;
+  let observedAtPush;
+  let observedAfterWidgetError;
+  let duplicateDuringAnalytics;
+  const push = dataLayer.push;
+  dataLayer.push = function (entry) {
+    observedAtPush = { text: h.result.textContent, state: h.result.dataset.state };
+    // A synchronous analytics callback cannot disturb the sent lock or message.
+    h.widgetError();
+    observedAfterWidgetError = h.result.textContent;
+    duplicateDuringAnalytics = h.submit();
+    return push.call(this, entry);
+  };
+  h = configured({ dataLayer, fetchHandler: () => pendingResponse });
+  h.form.action += '?source=private-campaign&contact_id=private-id';
+  const original = values(h);
+  const pending = h.submit();
+  assert.equal(dataLayer.length, 1);
+  assert.equal(h.requests.length, 1);
+  await h.submit();
+  assert.equal(h.requests.length, 1);
+  resolveResponse({ ok: true, status: 200, json() { bodyRead(); return pendingBody; } });
+  await readingBody;
+  assert.equal(dataLayer.length, 1);
+  resolveBody({ accepted: true, email: original.email, contact_id: 'backend-private-id' });
+  await pending;
+  await duplicateDuringAnalytics;
+  assert.equal(h.dataLayer, dataLayer);
+  assert.equal(dataLayer[0], existing);
+  assert.equal(dataLayer.length, 2);
+  const acceptedEvent = JSON.parse(JSON.stringify(dataLayer[1]));
+  assert.deepEqual(acceptedEvent, {
+    event: 'studio46_enquiry_accepted',
+    form_id: 'studio46_enquiry',
+    form_name: 'website_enquiry',
+  });
+  const encoded = JSON.stringify(acceptedEvent);
+  for (const value of [original.firstname.trim(), original.lastname.trim(), original.email.trim(),
+    original.enquiry.trim(), 'one-use-token', 'private-campaign', 'private-id',
+    'backend-private-id', h.form.action, String(fixedTime)]) assert.equal(encoded.includes(value), false);
+  assert.deepEqual(observedAtPush, {
+    text: 'Thank you. Your enquiry has been received.', state: 'success',
+  });
+  assert.equal(observedAfterWidgetError, observedAtPush.text);
+  for (const callback of [
+    () => h.widgetError(), () => h.expire(), () => h.token('late-token'),
+    () => h.scripts[0].onerror(), () => h.ready(), () => h.rerun(),
+  ]) callback();
+  await h.submit();
+  assert.equal(dataLayer.length, 2);
+  assert.equal(h.requests.length, 1);
+  assert.equal(h.result.textContent, observedAtPush.text);
+  assert.equal(h.buttonText.textContent, 'Enquiry sent');
+  assert.equal(h.button.disabled, true);
+  assert.deepEqual(values(h), original);
+});
+
+test('failed, false and uncertain responses never emit accepted analytics', async t => {
+  for (const [name, fetchHandler] of [
+    ['failed HTTP with accepted true', async () => response(false, { accepted: true })],
+    ['accepted false', async () => response(true, { accepted: false })],
+    ['accepted string', async () => response(true, { accepted: 'true' })],
+    ['missing accepted', async () => response(true, {})],
+    ['array response', async () => response(true, [])],
+    ['null response', async () => response(true, null)],
+    ['rate limited', async () => response(false, { code: 'rate_limited' }, 429)],
+    ['verification rejected', async () => response(false, { code: 'verification_failed' })],
+    ['delivery failed', async () => response(false, { code: 'delivery_failed' })],
+    ['delivery unconfirmed', async () => response(false, { code: 'delivery_unconfirmed' })],
+    ['network failed', async () => { throw new Error('Offline test failure'); }],
+    ['invalid JSON', async () => ({ ok: true, status: 200, json() { throw new SyntaxError('Invalid JSON'); } })],
+  ]) await t.test(name, async () => {
+    const dataLayer = [];
+    const h = configured({ dataLayer, fetchHandler });
+    await h.submit();
+    assertNoDeliveryClaim(h);
+    assert.deepEqual(dataLayer, []);
+    assert.equal(h.requests.length, 1);
+  });
+});
+
+test('missing, blocked or malformed analytics cannot change confirmed delivery or unlock repeats', async t => {
+  for (const [name, dataLayer] of [
+    ['missing queue', undefined],
+    ['throwing push', { push() { throw new Error('Analytics blocked'); } }],
+    ['frozen queue', Object.freeze([])],
+    ['malformed queue', {}],
+  ]) await t.test(name, async () => {
+    const h = configured({ dataLayer, fetchHandler: async () => response(true, { accepted: true }) });
+    await h.submit();
+    assert.equal(h.result.textContent, 'Thank you. Your enquiry has been received.');
+    assert.equal(h.result.dataset.state, 'success');
+    assert.equal(h.buttonText.textContent, 'Enquiry sent');
+    assert.equal(h.button.disabled, true);
+    if (dataLayer === undefined) assert.deepEqual(JSON.parse(JSON.stringify(h.dataLayer)), [{
+      event: 'studio46_enquiry_accepted', form_id: 'studio46_enquiry', form_name: 'website_enquiry',
+    }]);
+    h.widgetError();
+    h.token('late-token');
+    await h.submit();
+    assert.equal(h.result.dataset.state, 'success');
+    assert.equal(h.buttonText.textContent, 'Enquiry sent');
+    assert.equal(h.button.disabled, true);
+    assert.equal(h.requests.length, 1);
+  });
 });
 
 test('success requires both an HTTP success and the literal accepted:true', async t => {
