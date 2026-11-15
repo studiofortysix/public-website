@@ -5,6 +5,9 @@
 [build.environment]
   NODE_VERSION = "22"
 
+[context.deploy-preview]
+  command = 'yarn build --environment review --baseURL "${DEPLOY_PRIME_URL%/}/"'
+
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
