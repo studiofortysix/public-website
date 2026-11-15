@@ -1,7 +1,7 @@
 ---
-title: "Dashboards that answer useful questions"
-seo_title: "Looker Studio Dashboards & Reporting NZ"
-meta_description: "Useful marketing and website reporting in Looker Studio, Google Sheets or Power BI. Clear KPI definitions, relevant data and a practical handover."
+title: "Marketing dashboards & reporting"
+seo_title: "Marketing Dashboards & Looker Studio Reporting NZ"
+meta_description: "Marketing dashboards and reporting in Looker Studio, Google Sheets or Power BI. See campaign spend, qualified enquiries and customer outcomes where data allows."
 og_image: "/images/og-image-v2.png"
 url: "/dashboards-reporting/"
 service_page: true

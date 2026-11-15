@@ -52,6 +52,16 @@
     "boundary": "The audit is a defined diagnostic engagement. Repairs can be commissioned afterwards or handed to your developer. Any wider review of campaign profitability or business systems is agreed separately.",
     "proof": "audit",
     "proof_text": "In an independent review for a specialist service business, I found that website completion events did not provide a dependable count of confirmed customers. The delivered report separated the business definitions, test evidence and recommended repairs.",
+    "work_sample": {
+      "link": "See a sample audit finding",
+      "title": "Sample audit finding",
+      "note": "Paraphrased from the completed audit, with client details withheld.",
+      "findings": [
+        ["Finding", "A website completion event showed that someone reached a step in the process. It could not confirm that they had registered and paid."],
+        ["Why it matters", "Counting that event as a customer could overstate how many customers marketing brought in."],
+        ["Recommendation", "Report the website event as a journey step. Count confirmed customers from operational records after registration and initial payment."]
+      ]
+    },
     "faqs": [
       [
         "Is this an automated GA4 audit?",
@@ -206,6 +216,19 @@
     "boundary": "A dashboard shows what its source data can support. If definitions or tracking need repair first, I identify that dependency. Connector subscriptions, new data pipelines and ongoing analysis are agreed separately where required.",
     "proof": "regulators",
     "proof_text": "For two professional regulators, I delivered website reporting in one dashboard with separate views and a definitions page. The work included feedback on interpretation, metric language and the coverage of the underlying data.",
+    "work_sample": {
+      "link": "See a sample dashboard",
+      "title": "Sample dashboard: enquiries by channel",
+      "note": "Illustrative data for one month. Ad spend is in NZD.",
+      "table": {
+        "columns": ["Channel", "Ad spend", "Qualified enquiries", "New customers"],
+        "rows": [
+          ["Google Ads", "$1,800", "12", "3"],
+          ["Meta Ads", "$900", "3", "1"],
+          ["Organic search", "$0", "8", "2"]
+        ]
+      }
+    },
     "faqs": [
       [
         "Can you improve an existing Looker Studio report?",
