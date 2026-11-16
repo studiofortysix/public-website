@@ -1,7 +1,7 @@
 ---
-title: "Find the right starting point."
-seo_title: "Analytics & Measurement Services NZ"
-meta_description: "Explore analytics audits, conversion tracking, dashboards, measurement strategy and specialist support for agencies and public sector teams."
+title: "Google Analytics & Measurement Services"
+seo_title: "Google Analytics Services in Auckland & NZ"
+meta_description: "Independent Google Analytics (GA4) audits, conversion tracking and reporting for New Zealand organisations and agencies. Based in Auckland, working across NZ."
 og_image: "/images/og-image-v2.png"
 url: "/services/"
 draft: false

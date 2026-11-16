@@ -11,7 +11,10 @@
           <h1>{{ $page.Title }}</h1>
           <p class="s46-lede">{{ .lede }}</p>
           <p>{{ .intro }}</p>
-          <div class="s46-actions"><a class="s46-button" href="{{ "/contact/" | relURL }}">{{ .cta }} <span aria-hidden="true">↗</span></a></div>
+          <div class="s46-actions">
+            <a class="s46-button" href="{{ "/contact/" | relURL }}">{{ .cta }} <span aria-hidden="true">↗</span></a>
+            {{ with .work_sample }}<a class="s46-text-link" href="#service-sample">{{ .link }} <span aria-hidden="true">↓</span></a>{{ end }}
+          </div>
         </header>
         <aside class="s46-fit" aria-labelledby="service-fit-heading">
           <p class="s46-eyebrow">A useful starting point when</p>
@@ -46,7 +49,33 @@
 
       <section class="s46-section s46-proof" aria-labelledby="proof-heading">
         <div class="s46-section-heading"><p class="s46-eyebrow">Anonymised work example</p><h2 id="proof-heading">An example from practice.</h2></div>
-        <div><p>{{ .proof_text }}</p><a class="s46-text-link" href="{{ printf "/work/#%s" .proof | relURL }}">Read the example and its scope <span aria-hidden="true">↗</span></a></div>
+        <div>
+          <p>{{ .proof_text }}</p>
+          <a class="s46-text-link" href="{{ printf "/work/#%s" .proof | relURL }}">Read the example and its scope <span aria-hidden="true">↗</span></a>
+          {{ with .work_sample }}
+            <figure class="s46-work-sample" id="service-sample">
+              <figcaption>
+                <h3 id="service-sample-title">{{ .title }}</h3>
+                <p id="service-sample-note">{{ .note }}</p>
+              </figcaption>
+              {{ with .findings }}
+                <dl>
+                  {{ range . }}<div><dt>{{ index . 0 }}</dt><dd>{{ index . 1 }}</dd></div>{{ end }}
+                </dl>
+              {{ end }}
+              {{ with .table }}
+                <table aria-labelledby="service-sample-title" aria-describedby="service-sample-note">
+                  <thead><tr>{{ range .columns }}<th scope="col">{{ . }}</th>{{ end }}</tr></thead>
+                  <tbody>
+                    {{ range .rows }}
+                      <tr>{{ range $index, $value := . }}{{ if $index }}<td>{{ $value }}</td>{{ else }}<th scope="row">{{ $value }}</th>{{ end }}{{ end }}</tr>
+                    {{ end }}
+                  </tbody>
+                </table>
+              {{ end }}
+            </figure>
+          {{ end }}
+        </div>
       </section>
 
       <section class="s46-section" aria-labelledby="questions-heading">

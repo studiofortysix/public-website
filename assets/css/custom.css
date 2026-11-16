@@ -788,6 +788,56 @@ summary {
 .s46-proof .s46-text-link {
   font-size: 12px;
 }
+.s46-work-sample {
+  margin: 22px 0 0;
+  padding: clamp(12px, 2vw, 24px);
+  border: 1px solid var(--s46-line);
+  border-radius: 8px;
+  background: var(--s46-surface);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.s46-work-sample h3 {
+  font-size: 1.125rem;
+  margin: 0 0 8px;
+}
+.s46-work-sample figcaption > p {
+  margin: 0 0 16px;
+  font-size: 0.75rem;
+}
+.s46-work-sample dl,
+.s46-work-sample dd {
+  margin: 0;
+}
+.s46-work-sample dl > div,
+.s46-work-sample tbody tr {
+  border-top: 1px solid var(--s46-line);
+}
+.s46-work-sample dl > div {
+  padding: 10px 0;
+}
+.s46-work-sample dl > div:last-child {
+  padding-bottom: 0;
+}
+.s46-work-sample dt {
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+.s46-work-sample table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+.s46-work-sample :is(th, td) {
+  padding: 8px 4px;
+  line-height: 1.35;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.s46-work-sample :is(th, td):not(:first-child) {
+  text-align: right;
+}
 .s46-faq {
   border-bottom: 1px solid var(--s46-line);
 }

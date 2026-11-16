@@ -23,7 +23,7 @@
 
 {{- $canonical := .Permalink -}}
 {{- $robots := .Params.robots | default "index, follow" -}}
-{{- if eq .Kind "404" -}}
+{{- if or (eq .Kind "404") site.Params.review_mode -}}
   {{- $robots = "noindex, nofollow" -}}
 {{- end -}}
 {{- $image := "" -}}
@@ -81,7 +81,7 @@
 
 {{- $business := dict
   "@context" "https://schema.org"
-  "@type" "ProfessionalService"
+  "@type" "Organization"
   "@id" (printf "%s#business" site.BaseURL)
   "name" $siteTitle
   "url" site.BaseURL
